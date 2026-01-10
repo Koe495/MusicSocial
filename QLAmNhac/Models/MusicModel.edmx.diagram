@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="b57b88aba92f4887a903bb7bc5e3e7cf" Name="Diagram1" ZoomLevel="81">
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.BaiHat" Width="1.5" PointX="3" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.BinhLuan" Width="1.5" PointX="5.25" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.BinhLuanVote" Width="1.5" PointX="7.5" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.NguoiDung" Width="1.5" PointX="0.75" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.Playlist" Width="1.5" PointX="3" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.Playlist_ChiTiet" Width="1.5" PointX="8.25" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.Tag" Width="1.5" PointX="6" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.TagVote" Width="1.5" PointX="8.25" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLAmNhac_Web1Model.TheoDoi" Width="1.5" PointX="3" PointY="11.625" IsExpanded="true" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__BaiHat__NguoiUpl__46E78A0C" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__BinhLuan__MaBaiH__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__Playlist___MaBai__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__TagVote__MaBaiHa__4BAC3F29" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__BinhLuan__MaNguo__5AEE82B9" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__BinhLuan__MaPlay__5CD6CB2B" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__BinhLuanV__MaBin__619B8048" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__BinhLuanV__MaNgu__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__Playlist__MaNguo__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__TagVote__MaNguoi__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__TheoDoi__MaNgheS__3E52440B" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__TheoDoi__MaNguoi__3D5E1FD2" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__Playlist___MaPla__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="QLAmNhac_Web1Model.FK__TagVote__MaTag__4CA06362" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

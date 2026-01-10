@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Music Social</title>
+
+    <!-- 1. NAP BOOTSTRAP TỪ INTERNET -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- 2. Nạp FontAwesome (Icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- 3. CSS Tùy chỉnh của dự án -->
+    <!-- THÊM: ?v=@DateTime.Now.Ticks để ép trình duyệt xóa cache, luôn tải CSS mới nhất -->
+    <link href="@Url.Content("~/Content/Site.css")?v=@DateTime.Now.Ticks" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <!-- THANH MENU (NAVBAR) -->
+    <div class="navbar navbar-inverse navbar-fixed-top navbar-custom">
+        <div class="container">
+
+            <!-- Phần 1: Logo & Nút Mobile -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="@Url.Action("Index", "Home")" class="navbar-brand">
+                    <i class="fa fa-music"></i> MusicSocial
+                </a>
+            </div>
+
+            <!-- Phần 2: Nội dung Menu (Sẽ ẩn trên mobile, hiện trên desktop) -->
+            <div class="navbar-collapse collapse">
+
+                <!-- Menu Trái -->
+                <ul class="nav navbar-nav">
+                    <li><a href="@Url.Action("Index", "Home")" class="nav-link">Trang chủ</a></li>
+                </ul>
+
+                <!-- Ô TÌM KIẾM -->
+                <form class="navbar-form navbar-left" action="@Url.Action("Search", "Home")" method="get" style="border: none; margin-top: 10px;">
+                    <div class="form-group search-wrapper">
+                        <input type="text" name="query" class="form-control search-box" placeholder="Tìm bài hát, nghệ sĩ...">
+                        <button type="submit" class="search-btn-inside">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Menu Phải (Tài khoản) -->
+                <ul class="nav navbar-nav navbar-right">
+                    @if (Session["User"] != null)
+                    {
+                        // Lấy thông tin User từ Session
+                        var user = Session["User"] as QLAmNhac.Models.NguoiDung;
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-user-circle"></i> Xin chào, <strong>@user.HoTen</strong> <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+
+                                <!-- MỤC MỚI: PLAYLIST CỦA TÔI -->
+                                <li>
+                                    <a href="@Url.Action("Index", "Playlist")">
+                                        <i class="fa fa-list"></i> Playlist của tôi
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+
+                                <!-- MENU CHO NGHỆ SĨ & ADMIN -->
+                                @if (user.PhanQuyen == 1 || user.PhanQuyen == 2)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("MySongs", "Upload")">
+                                            <i class="fa fa-list-alt"></i> Quản lý nhạc đã đăng
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Create", "Upload")" style="color: #1db954;">
+                                            <i class="fa fa-cloud-upload-alt"></i> Đăng nhạc mới
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                }
+
+                                <!-- MENU RIÊNG CHO ADMIN -->
+                                @if (user.PhanQuyen == 2)
+                                {
+                                    // Tính số lượng bài hát chờ duyệt trực tiếp (Quick query)
+                                    int pendingCount = 0;
+                                    using (var dbCheck = new QLAmNhac.Models.QLAmNhac_Web1Entities1())
+                                    {
+                                        pendingCount = dbCheck.BaiHats.Count(x => x.TrangThaiDuyet == 0);
+                                    }
+
+                                    <li>
+                                        <a href="@Url.Action("Index", "Admin")" style="color: #d9534f; font-weight: bold;">
+                                            <i class="fa fa-gavel"></i> Duyệt bài
+                                            @if (pendingCount > 0)
+                                            {
+                                                <span class="badge" style="background-color: #d9534f; margin-left: 5px;">@pendingCount</span>
+                                            }
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("ArtistManager", "Admin")">
+                                            <i class="fa fa-users-cog"></i> Quản lý Nghệ sĩ
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                }
+
+                                <li><a href="@Url.Action("Logout", "Account")"><i class="fa fa-sign-out-alt"></i> Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a href="@Url.Action("Register", "Account")" class="nav-link"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
+                        <li><a href="@Url.Action("Login", "Account")" class="nav-link"><i class="fa fa-sign-in-alt"></i> Đăng nhập</a></li>
+                    }
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <div class="container body-content">
+        @RenderBody()
+        <hr style="border-color: #333;" />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Music Social Network</p>
+        </footer>
+    </div>
+
+    <!-- SCRIPT CẦN THIẾT -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,49 @@
+﻿@model QLAmNhac.Models.LoginVM
+
+@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+<div class="row justify-content-center" style="margin-top: 50px;">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="panel panel-default" style="background-color: #181818; border: 1px solid #333;">
+            <div class="panel-heading" style="background-color: #282828; color: #fff;">
+                <h3 class="panel-title text-center">ĐĂNG NHẬP</h3>
+            </div>
+            <div class="panel-body">
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                }
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label style="color: #b3b3b3;">Tên đăng nhập</label>
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "Nhập username..." })
+                        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color: #b3b3b3;">Mật khẩu</label>
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "****" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="text-danger">
+                        @Html.ValidationSummary(true)
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block font-weight-bold">ĐĂNG NHẬP</button>
+                }
+            </div>
+            <div class="panel-footer text-center" style="background-color: #282828; border-top: 1px solid #333;">
+                <span style="color: #b3b3b3;">Chưa có tài khoản?</span>
+                <a href="@Url.Action("Register", "Account")" style="color: #1db954;">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+</div>

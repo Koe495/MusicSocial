@@ -1,0 +1,146 @@
+﻿@model IEnumerable<QLAmNhac.Models.BaiHat>
+
+@{
+    ViewBag.Title = "Kiểm duyệt bài hát";
+}
+
+<div class="container" style="margin-top: 40px;">
+    <h2 style="color: #1db954; border-bottom: 1px solid #333; padding-bottom: 10px;">
+        <i class="fa fa-tasks"></i> Danh sách chờ duyệt (@Model.Count())
+    </h2>
+
+    @if (Model.Count() == 0)
+    {
+        <div class="alert alert-info" style="background: #282828; border: 1px solid #444; color: #ddd; margin-top: 20px;">
+            <i class="fa fa-check-circle"></i> Tuyệt vời! Không có bài hát nào đang chờ duyệt.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive" style="margin-top: 20px;">
+            <table class="table table-hover" style="color: #ddd;">
+                <thead>
+                    <tr style="background-color: #282828;">
+                        <th style="width: 50px;">#</th>
+                        <th style="width: 120px;">Thumbnail</th>
+                        <th>Thông tin bài hát</th>
+                        <th>Người đăng</th>
+                        <th>Ngày đăng</th>
+                        <th class="text-right">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="row-@item.MaBaiHat" style="border-bottom: 1px solid #333;">
+                            <td>@item.MaBaiHat</td>
+                            <td>
+                                <img src="https://img.youtube.com/vi/@item.LinkYoutube/mqdefault.jpg"
+                                     style="width: 100px; border-radius: 4px;" alt="Thumb" />
+                            </td>
+                            <td>
+                                <h4 style="margin: 0 0 5px 0; color: #fff;">@item.TenBaiHat</h4>
+                                <p class="text-muted" style="margin: 0;">
+                                    <i class="fa fa-microphone"></i> @item.NguoiTrinhBay
+                                </p>
+                                <a href="https://www.youtube.com/watch?v=@item.LinkYoutube" target="_blank" style="font-size: 12px; color: #1db954;">
+                                    <i class="fa fa-external-link-alt"></i> Xem thử trên YouTube
+                                </a>
+                            </td>
+                            <td>
+                                @(item.NguoiDung != null ? item.NguoiDung.HoTen : "Unknown")
+                            </td>
+                            <td>
+                                @(item.NgayDang.HasValue ? item.NgayDang.Value.ToString("dd/MM/yyyy HH:mm") : "")
+                            </td>
+                            <td class="text-right">
+                                <button class="btn btn-success btn-sm" onclick="approveSong(@item.MaBaiHat)">
+                                    <i class="fa fa-check"></i> Duyệt
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="openRejectModal(@item.MaBaiHat)">
+                                    <i class="fa fa-times"></i> Từ chối
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<!-- Modal Từ chối -->
+<div id="rejectModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #282828; color: white;">
+            <div class="modal-header" style="border-bottom: 1px solid #444;">
+                <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+                <h4 class="modal-title">Lý do từ chối bài hát</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="hiddenSongId" />
+                <div class="form-group">
+                    <label>Nhập lý do (để nghệ sĩ biết mà sửa):</label>
+                    <textarea id="txtReason" class="form-control" rows="3" style="background: #111; color: #fff; border: 1px solid #444;" placeholder="Ví dụ: Link hỏng, Tên sai, Vi phạm bản quyền..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #444;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="submitReject()">Xác nhận Từ chối</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        function approveSong(id) {
+            if (!confirm("Bạn chắc chắn muốn duyệt bài hát này?")) return;
+
+            $.ajax({
+                url: '/Admin/Approve',
+                type: 'POST',
+                data: { id: id },
+                success: function (res) {
+                    if (res.success) {
+                        $('#row-' + id).fadeOut(); // Ẩn dòng đã duyệt đi
+                    } else {
+                        alert(res.msg);
+                    }
+                },
+                error: function () { alert("Lỗi kết nối server!"); }
+            });
+        }
+
+        function openRejectModal(id) {
+            $('#hiddenSongId').val(id);
+            $('#txtReason').val(''); // Reset lý do
+            $('#rejectModal').modal('show');
+        }
+
+        function submitReject() {
+            var id = $('#hiddenSongId').val();
+            var reason = $('#txtReason').val();
+
+            if (reason.trim() == "") {
+                alert("Vui lòng nhập lý do từ chối!");
+                return;
+            }
+
+            $.ajax({
+                url: '/Admin/Reject',
+                type: 'POST',
+                data: { id: id, reason: reason },
+                success: function (res) {
+                    if (res.success) {
+                        $('#rejectModal').modal('hide');
+                        $('#row-' + id).fadeOut(); // Ẩn dòng đã từ chối đi
+                    } else {
+                        alert(res.msg);
+                    }
+                },
+                error: function () { alert("Lỗi kết nối server!"); }
+            });
+        }
+    </script>
+}

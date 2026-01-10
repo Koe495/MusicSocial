@@ -1,0 +1,170 @@
+﻿@model IEnumerable<QLAmNhac.Models.BaiHat>
+
+@{
+    ViewBag.Title = "Trang Chủ";
+}
+
+@functions {
+    public string GetYoutubeID(string url)
+    {
+        if (string.IsNullOrEmpty(url)) return "";
+        url = url.Trim();
+
+        if (url.Contains("/embed/"))
+            return url.Split(new[] { "/embed/" }, StringSplitOptions.None)[1].Split('?')[0];
+
+        if (url.Contains("v="))
+        {
+            var sub = url.Substring(url.IndexOf("v=") + 2);
+            return sub.Contains("&") ? sub.Substring(0, sub.IndexOf("&")) : sub;
+        }
+
+        if (url.Contains("youtu.be"))
+            return url.Split('/').Last().Split('?')[0];
+
+        return url;
+    }
+}
+<!-- HERO -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1 class="hero-title">Chào mừng đến với <br />Music Social</h1>
+        <p class="hero-desc">
+            Cùng nhau định nghĩa thể loại âm nhạc của bạn. Kết nối đam mê, chia sẻ cảm xúc.
+        </p>
+        <div style="margin-top:30px">
+            <a href="#trending" class="btn-hero-primary">
+                <i class="fa fa-play"></i> Bắt đầu nghe
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- DANH SÁCH BÀI HÁT NỔI BẬT -->
+<div class="container" id="trending">
+    <h3 class="text-white mb-4"
+        style="border-bottom:1px solid #333;padding-bottom:15px;display:flex;align-items:center">
+        <i class="fa fa-fire" style="color:#1db954;margin-right:10px"></i>
+        <span>Nổi bật</span>
+    </h3>
+
+    <div class="row">
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="music-card">
+
+                        <!-- Thumbnail -->
+                        <div style="position:relative">
+                            <img src="https://img.youtube.com/vi/@GetYoutubeID(item.LinkYoutube)/mqdefault.jpg"
+                                 alt="@item.TenBaiHat"
+                                 style="width:100%;height:160px;object-fit:cover">
+
+                            <div class="play-overlay">
+                                <a href="@Url.Action("Details","Songs",new { id = item.MaBaiHat })"
+                                   class="btn-play-card">
+                                    <i class="fa fa-play"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="card-body" style="padding:15px">
+
+                            <!-- TÊN BÀI HÁT -->
+                            <h5 class="card-title">
+                                <a href="@Url.Action("Details","Songs",new { id = item.MaBaiHat })"
+                                   class="music-text text-white text-decoration-none"
+                                   title="@item.TenBaiHat">
+                                    <span>@item.TenBaiHat</span>
+                                </a>
+                            </h5>
+
+                            <!-- NGƯỜI TRÌNH BÀY -->
+                            <p class="card-text text-muted artist-text">
+                                <span>
+                                    <i class="fa fa-microphone" style="margin-right: 4px;"></i>@item.NguoiTrinhBay
+                                </span>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center text-white">
+                <p>Chưa có bài hát nào.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- DANH SÁCH NGẪU NHIÊN (24 bài) -->
+<div class="container" id="random-songs" style="margin-top:40px;">
+    <h3 class="text-white mb-4"
+        style="border-bottom:1px solid #333;padding-bottom:15px;display:flex;align-items:center">
+        <i class="fa fa-random" style="color:#1db954;margin-right:10px"></i>
+        <span>Ngẫu nhiên cho bạn</span>
+    </h3>
+
+    <div class="row">
+        @{
+            var randomSongs = ViewBag.RandomSongs as List<QLAmNhac.Models.BaiHat>;
+            if (randomSongs != null && randomSongs.Count > 0)
+            {
+                foreach (var item in randomSongs)
+                {
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="music-card">
+                            <div style="position:relative">
+                                <img src="https://img.youtube.com/vi/@GetYoutubeID(item.LinkYoutube)/mqdefault.jpg"
+                                     alt="@item.TenBaiHat"
+                                     style="width:100%;height:160px;object-fit:cover">
+                                <div class="play-overlay">
+                                    <a href="@Url.Action("Details","Songs",new { id = item.MaBaiHat })"
+                                       class="btn-play-card">
+                                        <i class="fa fa-play"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="card-body" style="padding:15px">
+                                <h5 class="card-title">
+                                    <a href="@Url.Action("Details","Songs",new { id = item.MaBaiHat })"
+                                       class="music-text text-white text-decoration-none"
+                                       title="@item.TenBaiHat">
+                                        <span>@item.TenBaiHat</span>
+                                    </a>
+                                </h5>
+                                <p class="card-text text-muted artist-text">
+                                    <span>
+                                        <i class="fa fa-microphone" style="margin-right: 4px;"></i>@item.NguoiTrinhBay
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center text-white">
+                    <p>Không có bài ngẫu nhiên để hiển thị.</p>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    /* Không chạy animation */
+    document.querySelectorAll('.music-text span, .artist-text span').forEach(el => {
+        if (el.innerText.trim().length <= 20) {
+            el.style.animation = 'none';
+        }
+    });
+</script>

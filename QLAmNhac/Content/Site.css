@@ -1,0 +1,953 @@
+﻿/* =========================================
+   1. VARIABLES & RESET (EMERALD THEME)
+   ========================================= */
+:root {
+    --bg-dark: #000000;
+    --bg-card: #111827; /* Gray 900 */
+    --bg-card-hover: #1f2937; /* Gray 800 */
+    --text-primary: #ffffff;
+    --text-secondary: #9ca3af; /* Gray 400 */
+    --text-muted: #6b7280; /* Gray 500 */
+    --accent-emerald: #10b981; /* Emerald 500 */
+    --accent-hover: #34d399; /* Emerald 400 */
+    --destructive: #ef4444; /* Red 500 */
+    --border-color: #1f2937; /* Gray 800 */
+    --font-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: var(--font-base);
+    padding-top: 70px;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none !important;
+    transition: all 0.2s;
+}
+
+    a:hover {
+        color: var(--accent-emerald) !important;
+    }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 4px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #4b5563;
+    }
+
+/* =========================================
+   2. NAVBAR (GLASS EFFECT)
+   ========================================= */
+.navbar-custom {
+    background-color: rgba(0, 0, 0, 0.85); /* Đen mờ */
+    backdrop-filter: blur(12px); /* Hiệu ứng kính */
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 0;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    color: var(--text-primary) !important;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .navbar-brand i {
+        color: var(--accent-emerald);
+    }
+
+.nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+    .nav-link:hover {
+        color: var(--accent-emerald) !important;
+    }
+
+/* Search Box */
+.search-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.search-box {
+    background: var(--bg-card);
+    border: 1px solid #374151;
+    border-radius: 50px;
+    color: white;
+    padding: 6px 40px 8px 20px;
+    width: 300px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+    .search-box:focus {
+        border-color: var(--accent-emerald);
+        box-shadow: 0 0 0 1px var(--accent-emerald);
+    }
+
+.search-btn-inside {
+    position: absolute;
+    right: 0px;
+    top: 50%; /* Canh giữa chuẩn hơn */
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 6px 10px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+    .search-btn-inside:hover {
+        color: var(--accent-emerald);
+        background-color: rgba(16, 185, 129, 0.1);
+    }
+
+/* Nút Bình luận / Success */
+.btn-success {
+    background-color: var(--accent-emerald);
+    border-color: var(--accent-emerald);
+    color: white;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+    .btn-success:hover,
+    .btn-success:focus,
+    .btn-success:active {
+        background-color: var(--accent-hover) !important;
+        border-color: var(--accent-hover) !important;
+        color: #000 !important;
+        box-shadow: 0 4px 10px rgba(52, 211, 153, 0.4);
+    }
+
+/* =========================================
+   3. HERO SECTION (FULL SCREEN FIX)
+   ========================================= */
+.hero-section {
+    /* Kỹ thuật Full Bleed: Phá vỡ giới hạn container */
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    /* Style */
+    background: linear-gradient(135deg, var(--accent-emerald) 0%, #000000 90%);
+    padding: 80px 0;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    text-align: center; /* Căn giữa nội dung trong Hero */
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.hero-desc {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto 30px auto;
+    line-height: 1.6;
+}
+
+.btn-hero-primary {
+    background: white;
+    color: #000;
+    font-weight: 700;
+    padding: 12px 40px;
+    border-radius: 50px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+    .btn-hero-primary:hover {
+        background: #f3f4f6;
+        transform: scale(1.05);
+        color: var(--accent-emerald) !important;
+        text-decoration: none;
+    }
+
+/* =========================================
+   4. MUSIC CARDS (HOME PAGE)
+   ========================================= */
+.music-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    position: relative;
+    /* Đảm bảo ảnh không bị méo */
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+    .music-card:hover {
+        background-color: var(--bg-card-hover);
+        border-color: rgba(16, 185, 129, 0.3);
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+    }
+
+.card-img-top {
+    width: 100%;
+    height: 180px; /* Cố định chiều cao ảnh */
+    object-fit: cover; /* Cắt ảnh để vừa khung */
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Nút Play Bay Lên */
+.play-overlay {
+    position: absolute;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    bottom: 90px;
+}
+
+.music-card .play-overlay {
+    bottom: 60px;
+    right: 107px;
+    position: absolute;
+}
+
+.music-card:hover .play-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn-play-card {
+    background-color: var(--accent-emerald);
+    color: white;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    text-decoration: none;
+    padding-left: 3px;
+}
+
+    .btn-play-card:hover {
+        transform: scale(1.1);
+        color: white;
+    }
+
+.card-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    /* Cắt chữ nếu quá dài */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .card-title a {
+        color: white !important;
+        text-decoration: none;
+        line-height: 1.4;
+        margin-top: 0px;
+        margin-bottom: 5px;
+        font-size: 16px;
+        font-weight: bold
+    }
+
+        .card-title a:hover {
+            color: var(--accent-emerald) !important;
+            text-decoration: underline;
+        }
+
+.card-text {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: auto;
+    font-size: 13px;
+    margin: 0
+}
+
+/* ===== TEXT TRUNCATE + MARQUEE ===== */
+.music-text,
+.artist-text {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+    .music-text span,
+    .artist-text span {
+        display: inline-block;
+        max-width: 30ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: max-width .3s ease;
+    }
+
+/* Hover card → chạy chữ */
+.music-card:hover .music-text span,
+.music-card:hover .artist-text span {
+    max-width: none;
+    animation: marquee 6s linear infinite alternate;
+}
+
+/* Animation trái ↔ phải */
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* =========================================
+   5. DETAILS PAGE (VIDEO & INFO)
+   ========================================= */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+.song-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: var(--accent-emerald);
+}
+
+.song-artist {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.sidebar-box {
+    background-color: var(--bg-card);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+/* Gợi ý bài hát*/
+.sidebar-box {
+    background-color: #111; /* Màu nền tối */
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #282828;
+}
+
+.suggestion-title {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 18px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.suggestion-item {
+    margin-top: 17px;
+    transition: transform 0.2s;
+}
+
+    .suggestion-item:hover {
+        background-color: #1a1a1a;
+        border-radius: 6px;
+        transform: translateX(5px); /* Hiệu ứng đẩy nhẹ sang phải */
+    }
+
+    /* Layout Flexbox */
+    .suggestion-item a.d-flex {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+    }
+
+/* Ảnh Thumbnail nhỏ */
+.suggestion-img-wrapper {
+    position: relative;
+    width: 70px;
+    height: 50px;
+    flex-shrink: 0; /* Không cho ảnh bị co lại */
+    margin-right: 12px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+    .suggestion-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+/* Icon Play khi hover ảnh nhỏ */
+.suggestion-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.suggestion-item:hover .suggestion-overlay {
+    opacity: 1;
+}
+
+.suggestion-overlay i {
+    color: white;
+    font-size: 12px;
+}
+
+/* Text thông tin */
+.suggestion-info {
+    flex-grow: 1;
+    overflow: hidden; /* Để xử lý text dài */
+}
+
+.suggestion-song-name {
+    color: #fff;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Dấu ... nếu tên dài */
+    line-height: 1.4;
+}
+
+.suggestion-item:hover .suggestion-song-name {
+    color: #1db954; /* Đổi màu xanh khi hover */
+}
+
+.suggestion-artist {
+    color: #b3b3b3;
+    margin: 0;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =========================================
+   6. TAG SYSTEM
+   ========================================= */
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.tag-chip {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    cursor: default;
+}
+
+    .tag-chip:hover {
+        background-color: var(--bg-card-hover);
+        border-color: var(--accent-emerald);
+    }
+
+.tag-name {
+    font-weight: 600;
+    margin-right: 8px;
+    color: #ddd;
+}
+
+.tag-score {
+    background-color: var(--accent-emerald);
+    color: #000;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+    margin-top: 0px;
+}
+
+.btn-vote {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-left: 5px;
+    padding: 0 5px;
+    transition: color 0.2s;
+}
+
+    .btn-vote:hover {
+        color: var(--accent-emerald);
+    }
+
+    .btn-vote.voted {
+        color: var(--accent-emerald);
+    }
+
+/* Tag Highlight */
+.tag-chip.voted-tag {
+    border-color: var(--accent-emerald) !important;
+    background-color: rgba(16, 185, 129, 0.15);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+    .tag-chip.voted-tag .tag-name {
+        color: var(--accent-emerald) !important;
+    }
+
+    .tag-chip.voted-tag .btn-vote {
+        color: var(--accent-emerald) !important;
+    }
+
+/* Add Tag Button */
+.btn-add-tag {
+    background-color: transparent;
+    border: 1px solid var(--accent-emerald);
+    color: var(--accent-emerald);
+    border-radius: 50px;
+    padding: 6px 18px;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .btn-add-tag i {
+        font-size: 12px;
+        transition: transform 0.3s;
+    }
+
+    .btn-add-tag:hover {
+        background-color: var(--accent-emerald);
+        color: white;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+        .btn-add-tag:hover i {
+            transform: rotate(90deg);
+        }
+
+    .btn-add-tag:focus {
+        outline: none;
+        color: white;
+    }
+
+/* =========================================
+   7. COMMENTS SYSTEM
+   ========================================= */
+.media {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    overflow: visible !important;
+}
+
+.media-body {
+    position: static;
+}
+
+.cmt-actions {
+    font-size: 13px;
+    margin-top: 8px;
+    color: var(--text-secondary);
+}
+
+.cmt-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0 5px;
+    transition: all 0.2s;
+}
+
+    .cmt-btn.voted-up {
+        color: var(--accent-emerald) !important;
+        font-weight: bold;
+        transform: scale(1.1);
+    }
+
+    .cmt-btn.voted-down {
+        color: var(--destructive) !important;
+        font-weight: bold;
+        transform: scale(1.1);
+    }
+
+    .cmt-btn:hover {
+        color: var(--accent-emerald);
+        background-color: rgba(255,255,255,0.05);
+        border-radius: 4px;
+    }
+
+    .cmt-btn.delete:hover {
+        color: var(--destructive);
+    }
+
+.cmt-score {
+    font-weight: bold;
+    color: #ddd;
+    margin: 0 5px;
+    min-width: 20px;
+    display: inline-block;
+    text-align: center;
+}
+
+/* =========================================
+   8. DROPDOWN MENU (3 CHẤM)
+   ========================================= */
+.more-actions-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.2s linear;
+    z-index: 100;
+}
+
+.media:hover .more-actions-container {
+    visibility: visible;
+    opacity: 1;
+}
+
+.btn-more-options {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 18px;
+    padding: 0 10px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+    .btn-more-options:hover {
+        color: white;
+    }
+
+.custom-dropdown-menu {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    margin-top: -10px;
+    min-width: 140px;
+    border-radius: 6px;
+    padding: 5px 0;
+    z-index: 9999 !important;
+}
+
+    .custom-dropdown-menu > li > a {
+        display: block;
+        color: #ddd;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+        .custom-dropdown-menu > li > a:hover {
+            background-color: #374151;
+            color: white;
+        }
+
+/* =========================================
+   9. BUTTONS (Form Actions)
+   ========================================= */
+.btn-custom-save {
+    background-color: var(--accent-emerald);
+    border: 1px solid var(--accent-emerald);
+    color: white;
+    border-radius: 20px;
+    padding: 4px 15px;
+    font-weight: 600;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+    .btn-custom-save:hover {
+        background-color: var(--accent-hover);
+        border-color: var(--accent-hover);
+    }
+
+.btn-custom-cancel {
+    background-color: transparent;
+    border: 1px solid #6b7280;
+    color: #9ca3af;
+    border-radius: 20px;
+    padding: 4px 15px;
+    font-weight: 600;
+    font-size: 12px;
+    margin-left: 5px;
+    transition: all 0.2s;
+}
+
+    .btn-custom-cancel:hover {
+        border-color: white;
+        color: white;
+    }
+
+/* =========================================
+   10. TABLES (ADMIN/ARTIST) & PLAYLIST TABLE
+   ========================================= */
+/* Bảng chung (Admin/Artist) */
+.table-hover tbody tr:hover {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+    .table-hover tbody tr:hover td {
+        color: white !important;
+        background-color: transparent !important;
+    }
+
+.table-hover td {
+    vertical-align: middle !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+.table-hover th {
+    border-bottom: 2px solid var(--border-color) !important;
+    color: var(--text-secondary);
+}
+
+/* Custom Table (Dành cho Playlist & Song List) */
+.custom-table {
+    color: #ccc;
+    background-color: transparent;
+    width: 100%;
+}
+
+    .custom-table thead th {
+        border-bottom: 1px solid #333;
+        color: #bbb;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: normal;
+        padding: 10px;
+    }
+
+    .custom-table tbody tr {
+        transition: background-color 0.2s;
+        border-radius: 4px;
+    }
+
+        .custom-table tbody tr:hover {
+            background-color: rgba(255,255,255,0.1) !important;
+        }
+
+    .custom-table td {
+        padding: 10px;
+        vertical-align: middle;
+        border-top: none; /* Bỏ border mặc định của bootstrap cho playlist */
+    }
+
+/* =========================================
+   11. PLAYLIST SPECIFIC
+   ========================================= */
+.playlist-header-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    object-fit: cover;
+}
+
+.playlist-empty-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: #333;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+}
+
+.btn-play-all {
+    background-color: var(--accent-emerald);
+    color: white;
+    border-radius: 50px;
+    padding: 12px 45px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: transform 0.1s;
+    border: none;
+    display: inline-block;
+}
+
+    .btn-play-all:hover {
+        background-color: var(--accent-hover);
+        transform: scale(1.05);
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+.hover-white:hover {
+    color: #fff !important;
+}
+
+/* =========================================
+   12. DRAG AND DROP & UI HELPERS
+   ========================================= */
+/* Khi đang kéo, làm nổi bật và bo tròn */
+.ui-sortable-helper {
+    background-color: #282828 !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    display: table; /* Giữ định dạng bảng khi kéo */
+    border-radius: 4px;
+}
+
+/* Con trỏ kéo thả */
+.drag-handle {
+    cursor: grab; /* Icon bàn tay mở */
+    color: #555;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+    .drag-handle:hover {
+        color: var(--accent-emerald);
+    }
+
+    .drag-handle:active {
+        cursor: grabbing; /* Icon bàn tay nắm lại */
+    }
+
+/* =========================================
+   13. FOOTER
+   ========================================= */
+footer {
+    border-top: 1px solid var(--border-color);
+    padding: 40px 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-top: 60px;
+    background-color: #050505;
+}
+/* =========================================
+   14. CUSTOM ACTION BUTTONS (PLAYLIST)
+   ========================================= */
+.btn-remove-song {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary); /* Màu xám mặc định (#9ca3af) */
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; /* Hình tròn */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    margin-left: auto; /* Đẩy sang phải nếu nằm trong flex container */
+}
+
+    /* Hiệu ứng khi Hover: Nền đỏ mờ, icon đỏ tươi */
+    .btn-remove-song:hover {
+        background-color: rgba(239, 68, 68, 0.15); /* Màu đỏ loãng 15% */
+        color: var(--destructive); /* Màu đỏ (#ef4444) */
+        border-color: rgba(239, 68, 68, 0.2);
+        transform: scale(1.1); /* Phóng to nhẹ 10% */
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.25); /* Phát sáng đỏ */
+    }
+
+    /* Hiệu ứng khi Click */
+    .btn-remove-song:active {
+        transform: scale(0.95); /* Nhún xuống khi click */
+        background-color: rgba(239, 68, 68, 0.25);
+    }
+
+    /* Điều chỉnh icon bên trong cho cân đối */
+    .btn-remove-song i {
+        font-size: 16px;
+        pointer-events: none; /* Tránh click trúng icon gây lỗi event */
+    }

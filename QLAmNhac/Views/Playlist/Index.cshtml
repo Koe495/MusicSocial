@@ -1,0 +1,126 @@
+﻿@model IEnumerable<QLAmNhac.Models.Playlist>
+
+@{
+    ViewBag.Title = "Playlist của tôi";
+}
+
+<div class="container" style="margin-top: 40px;">
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 1px solid #333; padding-bottom: 15px;">
+        <h2 style="color: #fff; margin: 0;">
+            <i class="fa fa-list-ul" style="color: #1db954;"></i> Playlist của tôi
+        </h2>
+        <br />
+        <button class="btn btn-success" data-toggle="modal" data-target="#createPlaylistModal" style="background: #1db954; border: none;">
+            <i class="fa fa-plus"></i> Tạo mới
+        </button>
+    </div>
+
+    <div class="row">
+        @if (Model.Count() == 0)
+        {
+            <div class="col-md-12 text-center" style="padding: 50px; color: #777;">
+                <h4>Bạn chưa có playlist nào.</h4>
+                <p>Hãy tạo playlist để lưu trữ những bài hát yêu thích nhé!</p>
+            </div>
+        }
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 col-sm-6 mb-4" id="pl-@item.MaPlaylist">
+                <div class="music-card">
+                    <!-- Ảnh đại diện Playlist (Lấy ảnh bài đầu tiên hoặc ảnh mặc định) -->
+                    <div style="position: relative; height: 160px; background: #222; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        @if (item.Playlist_ChiTiet.Count > 0)
+                        {
+                            var firstSong = item.Playlist_ChiTiet.FirstOrDefault().BaiHat;
+                            <img src="https://img.youtube.com/vi/@firstSong.LinkYoutube/hqdefault.jpg" style="width: 100%; height: 100%; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <i class="fa fa-music" style="font-size: 50px; color: #444;"></i>
+                        }
+
+                        <div class="play-overlay">
+                            <a href="@Url.Action("Details", new { id = item.MaPlaylist })" class="btn-play-card">
+                                <i class="fa fa-play"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="@Url.Action("Details", new { id = item.MaPlaylist })">@item.TenPlaylist</a>
+                        </h5>
+                        <p class="card-text">
+                            @item.Playlist_ChiTiet.Count bài hát
+                            @if (item.CheDoRiengTu == true)
+                            {<i class="fa fa-lock" title="Riêng tư"></i> }
+                            else
+                            { <i class="fa fa-globe" title="Công khai"></i>}
+                        </p>
+                        <button class="btn btn-xs btn-danger pull-right" onclick="deletePlaylist(@item.MaPlaylist)">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal Tạo Playlist -->
+<div id="createPlaylistModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="background-color: #282828; color: white;">
+            <div class="modal-header" style="border-bottom: 1px solid #444;">
+                <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+                <h4 class="modal-title">Tạo Playlist mới</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tên Playlist</label>
+                    <input type="text" id="txtPlName" class="form-control" style="background: #111; border: 1px solid #444; color: white;">
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="chkPrivate"> Riêng tư (Chỉ mình tôi xem)
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #444;">
+                <button type="button" class="btn btn-success" onclick="createPlaylist()">Tạo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        function createPlaylist() {
+            var name = $('#txtPlName').val();
+            var isPrivate = $('#chkPrivate').is(':checked');
+
+            if(name.trim() == "") { alert("Vui lòng nhập tên!"); return; }
+
+            $.ajax({
+                url: '/Playlist/Create', type: 'POST',
+                data: { name: name, isPrivate: isPrivate },
+                success: function(res) {
+                    if(res.success) location.reload();
+                    else alert(res.msg);
+                }
+            });
+        }
+
+        function deletePlaylist(id) {
+            if(!confirm("Bạn có chắc muốn xóa playlist này?")) return;
+            $.ajax({
+                url: '/Playlist/Delete', type: 'POST', data: { id: id },
+                success: function(res) {
+                    if(res.success) $('#pl-' + id).fadeOut();
+                    else alert(res.msg);
+                }
+            });
+        }
+    </script>
+}

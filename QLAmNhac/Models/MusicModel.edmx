@@ -1,0 +1,866 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="QLAmNhac_Web1Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BaiHat">
+          <Key>
+            <PropertyRef Name="MaBaiHat" />
+          </Key>
+          <Property Name="MaBaiHat" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenBaiHat" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NguoiTrinhBay" Type="nvarchar" MaxLength="100" />
+          <Property Name="LinkYoutube" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="NguoiUpload" Type="int" />
+          <Property Name="NgayDang" Type="datetime" />
+          <Property Name="TrangThaiDuyet" Type="int" />
+          <Property Name="GhiChuAdmin" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="BinhLuan">
+          <Key>
+            <PropertyRef Name="MaBinhLuan" />
+          </Key>
+          <Property Name="MaBinhLuan" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NoiDung" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="int" Nullable="false" />
+          <Property Name="MaBaiHat" Type="int" />
+          <Property Name="MaPlaylist" Type="int" />
+          <Property Name="NgayBinhLuan" Type="datetime" />
+        </EntityType>
+        <EntityType Name="BinhLuanVote">
+          <Key>
+            <PropertyRef Name="MaBinhLuan" />
+            <PropertyRef Name="MaNguoiDung" />
+          </Key>
+          <Property Name="MaBinhLuan" Type="int" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="int" Nullable="false" />
+          <Property Name="IsUpvote" Type="bit" Nullable="false" />
+          <Property Name="NgayVote" Type="datetime" />
+        </EntityType>
+        <EntityType Name="NguoiDung">
+          <Key>
+            <PropertyRef Name="MaNguoiDung" />
+          </Key>
+          <Property Name="MaNguoiDung" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenDangNhap" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MatKhau" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="HoTen" Type="nvarchar" MaxLength="100" />
+          <Property Name="Email" Type="nvarchar" MaxLength="100" />
+          <Property Name="MoTa" Type="ntext" />
+          <Property Name="AnhDaiDien" Type="nvarchar" MaxLength="255" />
+          <Property Name="PhanQuyen" Type="int" Nullable="false" />
+          <Property Name="TrangThai" Type="bit" />
+          <Property Name="NgayTao" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Playlist">
+          <Key>
+            <PropertyRef Name="MaPlaylist" />
+          </Key>
+          <Property Name="MaPlaylist" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenPlaylist" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="int" />
+          <Property Name="CheDoRiengTu" Type="bit" />
+          <Property Name="NgayTao" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Playlist_ChiTiet">
+          <Key>
+            <PropertyRef Name="MaPlaylist" />
+            <PropertyRef Name="MaBaiHat" />
+          </Key>
+          <Property Name="MaPlaylist" Type="int" Nullable="false" />
+          <Property Name="MaBaiHat" Type="int" Nullable="false" />
+          <Property Name="NgayThem" Type="datetime" />
+          <Property Name="ThuTu" Type="int" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="MaTag" />
+          </Key>
+          <Property Name="MaTag" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenTag" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LaGoiY" Type="bit" />
+        </EntityType>
+        <EntityType Name="TagVote">
+          <Key>
+            <PropertyRef Name="MaBaiHat" />
+            <PropertyRef Name="MaTag" />
+            <PropertyRef Name="MaNguoiDung" />
+          </Key>
+          <Property Name="MaBaiHat" Type="int" Nullable="false" />
+          <Property Name="MaTag" Type="int" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="int" Nullable="false" />
+          <Property Name="NgayVote" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TheoDoi">
+          <Key>
+            <PropertyRef Name="MaNguoiTheoDoi" />
+            <PropertyRef Name="MaNgheSi" />
+          </Key>
+          <Property Name="MaNguoiTheoDoi" Type="int" Nullable="false" />
+          <Property Name="MaNgheSi" Type="int" Nullable="false" />
+          <Property Name="NgayTheoDoi" Type="datetime" />
+        </EntityType>
+        <Association Name="FK__BaiHat__NguoiUpl__46E78A0C">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="0..1" />
+          <End Role="BaiHat" Type="Self.BaiHat" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="BaiHat">
+              <PropertyRef Name="NguoiUpload" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuan__MaBaiH__5BE2A6F2">
+          <End Role="BaiHat" Type="Self.BaiHat" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="BinhLuan" Type="Self.BinhLuan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BaiHat">
+              <PropertyRef Name="MaBaiHat" />
+            </Principal>
+            <Dependent Role="BinhLuan">
+              <PropertyRef Name="MaBaiHat" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuan__MaNguo__5AEE82B9">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="BinhLuan" Type="Self.BinhLuan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="BinhLuan">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuan__MaPlay__5CD6CB2B">
+          <End Role="Playlist" Type="Self.Playlist" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="BinhLuan" Type="Self.BinhLuan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Playlist">
+              <PropertyRef Name="MaPlaylist" />
+            </Principal>
+            <Dependent Role="BinhLuan">
+              <PropertyRef Name="MaPlaylist" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuanV__MaBin__66603565">
+          <End Role="BinhLuan" Type="Self.BinhLuan" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="BinhLuanVote" Type="Self.BinhLuanVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BinhLuan">
+              <PropertyRef Name="MaBinhLuan" />
+            </Principal>
+            <Dependent Role="BinhLuanVote">
+              <PropertyRef Name="MaBinhLuan" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuanV__MaNgu__6754599E">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="BinhLuanVote" Type="Self.BinhLuanVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="BinhLuanVote">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Playlist___MaBai__571DF1D5">
+          <End Role="BaiHat" Type="Self.BaiHat" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Playlist_ChiTiet" Type="Self.Playlist_ChiTiet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BaiHat">
+              <PropertyRef Name="MaBaiHat" />
+            </Principal>
+            <Dependent Role="Playlist_ChiTiet">
+              <PropertyRef Name="MaBaiHat" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Playlist___MaPla__5629CD9C">
+          <End Role="Playlist" Type="Self.Playlist" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Playlist_ChiTiet" Type="Self.Playlist_ChiTiet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Playlist">
+              <PropertyRef Name="MaPlaylist" />
+            </Principal>
+            <Dependent Role="Playlist_ChiTiet">
+              <PropertyRef Name="MaPlaylist" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Playlist__MaNguo__5165187F">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Playlist" Type="Self.Playlist" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="Playlist">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TagVote__MaBaiHa__4BAC3F29">
+          <End Role="BaiHat" Type="Self.BaiHat" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TagVote" Type="Self.TagVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BaiHat">
+              <PropertyRef Name="MaBaiHat" />
+            </Principal>
+            <Dependent Role="TagVote">
+              <PropertyRef Name="MaBaiHat" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TagVote__MaNguoi__4D94879B">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="TagVote" Type="Self.TagVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="TagVote">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TagVote__MaTag__4CA06362">
+          <End Role="Tag" Type="Self.Tag" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TagVote" Type="Self.TagVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="MaTag" />
+            </Principal>
+            <Dependent Role="TagVote">
+              <PropertyRef Name="MaTag" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TheoDoi__MaNgheS__3E52440B">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="TheoDoi" Type="Self.TheoDoi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="TheoDoi">
+              <PropertyRef Name="MaNgheSi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TheoDoi__MaNguoi__3D5E1FD2">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="TheoDoi" Type="Self.TheoDoi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="TheoDoi">
+              <PropertyRef Name="MaNguoiTheoDoi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="QLAmNhac_Web1ModelStoreContainer">
+          <EntitySet Name="BaiHat" EntityType="Self.BaiHat" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BinhLuan" EntityType="Self.BinhLuan" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BinhLuanVote" EntityType="Self.BinhLuanVote" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NguoiDung" EntityType="Self.NguoiDung" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Playlist" EntityType="Self.Playlist" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Playlist_ChiTiet" EntityType="Self.Playlist_ChiTiet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TagVote" EntityType="Self.TagVote" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TheoDoi" EntityType="Self.TheoDoi" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__BaiHat__NguoiUpl__46E78A0C" Association="Self.FK__BaiHat__NguoiUpl__46E78A0C">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="BaiHat" EntitySet="BaiHat" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuan__MaBaiH__5BE2A6F2" Association="Self.FK__BinhLuan__MaBaiH__5BE2A6F2">
+            <End Role="BaiHat" EntitySet="BaiHat" />
+            <End Role="BinhLuan" EntitySet="BinhLuan" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuan__MaNguo__5AEE82B9" Association="Self.FK__BinhLuan__MaNguo__5AEE82B9">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="BinhLuan" EntitySet="BinhLuan" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuan__MaPlay__5CD6CB2B" Association="Self.FK__BinhLuan__MaPlay__5CD6CB2B">
+            <End Role="Playlist" EntitySet="Playlist" />
+            <End Role="BinhLuan" EntitySet="BinhLuan" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuanV__MaBin__66603565" Association="Self.FK__BinhLuanV__MaBin__66603565">
+            <End Role="BinhLuan" EntitySet="BinhLuan" />
+            <End Role="BinhLuanVote" EntitySet="BinhLuanVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuanV__MaNgu__6754599E" Association="Self.FK__BinhLuanV__MaNgu__6754599E">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="BinhLuanVote" EntitySet="BinhLuanVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Playlist___MaBai__571DF1D5" Association="Self.FK__Playlist___MaBai__571DF1D5">
+            <End Role="BaiHat" EntitySet="BaiHat" />
+            <End Role="Playlist_ChiTiet" EntitySet="Playlist_ChiTiet" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Playlist___MaPla__5629CD9C" Association="Self.FK__Playlist___MaPla__5629CD9C">
+            <End Role="Playlist" EntitySet="Playlist" />
+            <End Role="Playlist_ChiTiet" EntitySet="Playlist_ChiTiet" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Playlist__MaNguo__5165187F" Association="Self.FK__Playlist__MaNguo__5165187F">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="Playlist" EntitySet="Playlist" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TagVote__MaBaiHa__4BAC3F29" Association="Self.FK__TagVote__MaBaiHa__4BAC3F29">
+            <End Role="BaiHat" EntitySet="BaiHat" />
+            <End Role="TagVote" EntitySet="TagVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TagVote__MaNguoi__4D94879B" Association="Self.FK__TagVote__MaNguoi__4D94879B">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="TagVote" EntitySet="TagVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TagVote__MaTag__4CA06362" Association="Self.FK__TagVote__MaTag__4CA06362">
+            <End Role="Tag" EntitySet="Tag" />
+            <End Role="TagVote" EntitySet="TagVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TheoDoi__MaNgheS__3E52440B" Association="Self.FK__TheoDoi__MaNgheS__3E52440B">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="TheoDoi" EntitySet="TheoDoi" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TheoDoi__MaNguoi__3D5E1FD2" Association="Self.FK__TheoDoi__MaNguoi__3D5E1FD2">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="TheoDoi" EntitySet="TheoDoi" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="QLAmNhac_Web1Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BaiHat">
+          <Key>
+            <PropertyRef Name="MaBaiHat" />
+          </Key>
+          <Property Name="MaBaiHat" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenBaiHat" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NguoiTrinhBay" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LinkYoutube" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NguoiUpload" Type="Int32" />
+          <Property Name="NgayDang" Type="DateTime" Precision="3" />
+          <Property Name="TrangThaiDuyet" Type="Int32" />
+          <Property Name="GhiChuAdmin" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NguoiDung" Relationship="Self.FK__BaiHat__NguoiUpl__46E78A0C" FromRole="BaiHat" ToRole="NguoiDung" />
+          <NavigationProperty Name="BinhLuans" Relationship="Self.FK__BinhLuan__MaBaiH__5BE2A6F2" FromRole="BaiHat" ToRole="BinhLuan" />
+          <NavigationProperty Name="Playlist_ChiTiet" Relationship="Self.FK__Playlist___MaBai__571DF1D5" FromRole="BaiHat" ToRole="Playlist_ChiTiet" />
+          <NavigationProperty Name="TagVotes" Relationship="Self.FK__TagVote__MaBaiHa__4BAC3F29" FromRole="BaiHat" ToRole="TagVote" />
+        </EntityType>
+        <EntityType Name="BinhLuan">
+          <Key>
+            <PropertyRef Name="MaBinhLuan" />
+          </Key>
+          <Property Name="MaBinhLuan" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NoiDung" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="Int32" Nullable="false" />
+          <Property Name="MaBaiHat" Type="Int32" />
+          <Property Name="MaPlaylist" Type="Int32" />
+          <Property Name="NgayBinhLuan" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="BaiHat" Relationship="Self.FK__BinhLuan__MaBaiH__5BE2A6F2" FromRole="BinhLuan" ToRole="BaiHat" />
+          <NavigationProperty Name="NguoiDung" Relationship="Self.FK__BinhLuan__MaNguo__5AEE82B9" FromRole="BinhLuan" ToRole="NguoiDung" />
+          <NavigationProperty Name="Playlist" Relationship="Self.FK__BinhLuan__MaPlay__5CD6CB2B" FromRole="BinhLuan" ToRole="Playlist" />
+          <NavigationProperty Name="BinhLuanVotes" Relationship="Self.FK__BinhLuanV__MaBin__619B8048" FromRole="BinhLuan" ToRole="BinhLuanVote" />
+        </EntityType>
+        <EntityType Name="BinhLuanVote">
+          <Key>
+            <PropertyRef Name="MaBinhLuan" />
+            <PropertyRef Name="MaNguoiDung" />
+          </Key>
+          <Property Name="MaBinhLuan" Type="Int32" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="Int32" Nullable="false" />
+          <Property Name="NgayVote" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="BinhLuan" Relationship="Self.FK__BinhLuanV__MaBin__619B8048" FromRole="BinhLuanVote" ToRole="BinhLuan" />
+          <NavigationProperty Name="NguoiDung" Relationship="Self.FK__BinhLuanV__MaNgu__628FA481" FromRole="BinhLuanVote" ToRole="NguoiDung" />
+          <Property Name="IsUpvote" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="NguoiDung">
+          <Key>
+            <PropertyRef Name="MaNguoiDung" />
+          </Key>
+          <Property Name="MaNguoiDung" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenDangNhap" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MatKhau" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="HoTen" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MoTa" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AnhDaiDien" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PhanQuyen" Type="Int32" Nullable="false" />
+          <Property Name="TrangThai" Type="Boolean" />
+          <Property Name="NgayTao" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="BaiHats" Relationship="Self.FK__BaiHat__NguoiUpl__46E78A0C" FromRole="NguoiDung" ToRole="BaiHat" />
+          <NavigationProperty Name="BinhLuans" Relationship="Self.FK__BinhLuan__MaNguo__5AEE82B9" FromRole="NguoiDung" ToRole="BinhLuan" />
+          <NavigationProperty Name="BinhLuanVotes" Relationship="Self.FK__BinhLuanV__MaNgu__628FA481" FromRole="NguoiDung" ToRole="BinhLuanVote" />
+          <NavigationProperty Name="Playlists" Relationship="Self.FK__Playlist__MaNguo__5165187F" FromRole="NguoiDung" ToRole="Playlist" />
+          <NavigationProperty Name="TagVotes" Relationship="Self.FK__TagVote__MaNguoi__4D94879B" FromRole="NguoiDung" ToRole="TagVote" />
+          <NavigationProperty Name="TheoDois" Relationship="Self.FK__TheoDoi__MaNgheS__3E52440B" FromRole="NguoiDung" ToRole="TheoDoi" />
+          <NavigationProperty Name="TheoDois1" Relationship="Self.FK__TheoDoi__MaNguoi__3D5E1FD2" FromRole="NguoiDung" ToRole="TheoDoi" />
+        </EntityType>
+        <EntityType Name="Playlist">
+          <Key>
+            <PropertyRef Name="MaPlaylist" />
+          </Key>
+          <Property Name="MaPlaylist" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenPlaylist" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="Int32" />
+          <Property Name="CheDoRiengTu" Type="Boolean" />
+          <Property Name="NgayTao" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="BinhLuans" Relationship="Self.FK__BinhLuan__MaPlay__5CD6CB2B" FromRole="Playlist" ToRole="BinhLuan" />
+          <NavigationProperty Name="NguoiDung" Relationship="Self.FK__Playlist__MaNguo__5165187F" FromRole="Playlist" ToRole="NguoiDung" />
+          <NavigationProperty Name="Playlist_ChiTiet" Relationship="Self.FK__Playlist___MaPla__5629CD9C" FromRole="Playlist" ToRole="Playlist_ChiTiet" />
+        </EntityType>
+        <EntityType Name="Playlist_ChiTiet">
+          <Key>
+            <PropertyRef Name="MaPlaylist" />
+            <PropertyRef Name="MaBaiHat" />
+          </Key>
+          <Property Name="MaPlaylist" Type="Int32" Nullable="false" />
+          <Property Name="MaBaiHat" Type="Int32" Nullable="false" />
+          <Property Name="NgayThem" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="BaiHat" Relationship="Self.FK__Playlist___MaBai__571DF1D5" FromRole="Playlist_ChiTiet" ToRole="BaiHat" />
+          <NavigationProperty Name="Playlist" Relationship="Self.FK__Playlist___MaPla__5629CD9C" FromRole="Playlist_ChiTiet" ToRole="Playlist" />
+          <Property Name="ThuTu" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="MaTag" />
+          </Key>
+          <Property Name="MaTag" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenTag" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LaGoiY" Type="Boolean" />
+          <NavigationProperty Name="TagVotes" Relationship="Self.FK__TagVote__MaTag__4CA06362" FromRole="Tag" ToRole="TagVote" />
+        </EntityType>
+        <EntityType Name="TagVote">
+          <Key>
+            <PropertyRef Name="MaBaiHat" />
+            <PropertyRef Name="MaTag" />
+            <PropertyRef Name="MaNguoiDung" />
+          </Key>
+          <Property Name="MaBaiHat" Type="Int32" Nullable="false" />
+          <Property Name="MaTag" Type="Int32" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="Int32" Nullable="false" />
+          <Property Name="NgayVote" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="BaiHat" Relationship="Self.FK__TagVote__MaBaiHa__4BAC3F29" FromRole="TagVote" ToRole="BaiHat" />
+          <NavigationProperty Name="NguoiDung" Relationship="Self.FK__TagVote__MaNguoi__4D94879B" FromRole="TagVote" ToRole="NguoiDung" />
+          <NavigationProperty Name="Tag" Relationship="Self.FK__TagVote__MaTag__4CA06362" FromRole="TagVote" ToRole="Tag" />
+        </EntityType>
+        <EntityType Name="TheoDoi">
+          <Key>
+            <PropertyRef Name="MaNguoiTheoDoi" />
+            <PropertyRef Name="MaNgheSi" />
+          </Key>
+          <Property Name="MaNguoiTheoDoi" Type="Int32" Nullable="false" />
+          <Property Name="MaNgheSi" Type="Int32" Nullable="false" />
+          <Property Name="NgayTheoDoi" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="NguoiDung" Relationship="Self.FK__TheoDoi__MaNgheS__3E52440B" FromRole="TheoDoi" ToRole="NguoiDung" />
+          <NavigationProperty Name="NguoiDung1" Relationship="Self.FK__TheoDoi__MaNguoi__3D5E1FD2" FromRole="TheoDoi" ToRole="NguoiDung" />
+        </EntityType>
+        <Association Name="FK__BaiHat__NguoiUpl__46E78A0C">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="0..1" />
+          <End Role="BaiHat" Type="Self.BaiHat" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="BaiHat">
+              <PropertyRef Name="NguoiUpload" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuan__MaBaiH__5BE2A6F2">
+          <End Role="BaiHat" Type="Self.BaiHat" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="BinhLuan" Type="Self.BinhLuan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BaiHat">
+              <PropertyRef Name="MaBaiHat" />
+            </Principal>
+            <Dependent Role="BinhLuan">
+              <PropertyRef Name="MaBaiHat" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Playlist___MaBai__571DF1D5">
+          <End Role="BaiHat" Type="Self.BaiHat" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Playlist_ChiTiet" Type="Self.Playlist_ChiTiet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BaiHat">
+              <PropertyRef Name="MaBaiHat" />
+            </Principal>
+            <Dependent Role="Playlist_ChiTiet">
+              <PropertyRef Name="MaBaiHat" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TagVote__MaBaiHa__4BAC3F29">
+          <End Role="BaiHat" Type="Self.BaiHat" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TagVote" Type="Self.TagVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BaiHat">
+              <PropertyRef Name="MaBaiHat" />
+            </Principal>
+            <Dependent Role="TagVote">
+              <PropertyRef Name="MaBaiHat" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuan__MaNguo__5AEE82B9">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="BinhLuan" Type="Self.BinhLuan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="BinhLuan">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuan__MaPlay__5CD6CB2B">
+          <End Role="Playlist" Type="Self.Playlist" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="BinhLuan" Type="Self.BinhLuan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Playlist">
+              <PropertyRef Name="MaPlaylist" />
+            </Principal>
+            <Dependent Role="BinhLuan">
+              <PropertyRef Name="MaPlaylist" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuanV__MaBin__619B8048">
+          <End Role="BinhLuan" Type="Self.BinhLuan" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="BinhLuanVote" Type="Self.BinhLuanVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BinhLuan">
+              <PropertyRef Name="MaBinhLuan" />
+            </Principal>
+            <Dependent Role="BinhLuanVote">
+              <PropertyRef Name="MaBinhLuan" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BinhLuanV__MaNgu__628FA481">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="BinhLuanVote" Type="Self.BinhLuanVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="BinhLuanVote">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Playlist__MaNguo__5165187F">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Playlist" Type="Self.Playlist" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="Playlist">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TagVote__MaNguoi__4D94879B">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="TagVote" Type="Self.TagVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="TagVote">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TheoDoi__MaNgheS__3E52440B">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="TheoDoi" Type="Self.TheoDoi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="TheoDoi">
+              <PropertyRef Name="MaNgheSi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TheoDoi__MaNguoi__3D5E1FD2">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="TheoDoi" Type="Self.TheoDoi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="TheoDoi">
+              <PropertyRef Name="MaNguoiTheoDoi" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Playlist___MaPla__5629CD9C">
+          <End Role="Playlist" Type="Self.Playlist" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Playlist_ChiTiet" Type="Self.Playlist_ChiTiet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Playlist">
+              <PropertyRef Name="MaPlaylist" />
+            </Principal>
+            <Dependent Role="Playlist_ChiTiet">
+              <PropertyRef Name="MaPlaylist" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TagVote__MaTag__4CA06362">
+          <End Role="Tag" Type="Self.Tag" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TagVote" Type="Self.TagVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="MaTag" />
+            </Principal>
+            <Dependent Role="TagVote">
+              <PropertyRef Name="MaTag" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="QLAmNhac_Web1Entities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BaiHats" EntityType="Self.BaiHat" />
+          <EntitySet Name="BinhLuans" EntityType="Self.BinhLuan" />
+          <EntitySet Name="BinhLuanVotes" EntityType="Self.BinhLuanVote" />
+          <EntitySet Name="NguoiDungs" EntityType="Self.NguoiDung" />
+          <EntitySet Name="Playlists" EntityType="Self.Playlist" />
+          <EntitySet Name="Playlist_ChiTiet" EntityType="Self.Playlist_ChiTiet" />
+          <EntitySet Name="Tags" EntityType="Self.Tag" />
+          <EntitySet Name="TagVotes" EntityType="Self.TagVote" />
+          <EntitySet Name="TheoDois" EntityType="Self.TheoDoi" />
+          <AssociationSet Name="FK__BaiHat__NguoiUpl__46E78A0C" Association="Self.FK__BaiHat__NguoiUpl__46E78A0C">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="BaiHat" EntitySet="BaiHats" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuan__MaBaiH__5BE2A6F2" Association="Self.FK__BinhLuan__MaBaiH__5BE2A6F2">
+            <End Role="BaiHat" EntitySet="BaiHats" />
+            <End Role="BinhLuan" EntitySet="BinhLuans" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Playlist___MaBai__571DF1D5" Association="Self.FK__Playlist___MaBai__571DF1D5">
+            <End Role="BaiHat" EntitySet="BaiHats" />
+            <End Role="Playlist_ChiTiet" EntitySet="Playlist_ChiTiet" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TagVote__MaBaiHa__4BAC3F29" Association="Self.FK__TagVote__MaBaiHa__4BAC3F29">
+            <End Role="BaiHat" EntitySet="BaiHats" />
+            <End Role="TagVote" EntitySet="TagVotes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuan__MaNguo__5AEE82B9" Association="Self.FK__BinhLuan__MaNguo__5AEE82B9">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="BinhLuan" EntitySet="BinhLuans" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuan__MaPlay__5CD6CB2B" Association="Self.FK__BinhLuan__MaPlay__5CD6CB2B">
+            <End Role="Playlist" EntitySet="Playlists" />
+            <End Role="BinhLuan" EntitySet="BinhLuans" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuanV__MaBin__619B8048" Association="Self.FK__BinhLuanV__MaBin__619B8048">
+            <End Role="BinhLuan" EntitySet="BinhLuans" />
+            <End Role="BinhLuanVote" EntitySet="BinhLuanVotes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BinhLuanV__MaNgu__628FA481" Association="Self.FK__BinhLuanV__MaNgu__628FA481">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="BinhLuanVote" EntitySet="BinhLuanVotes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Playlist__MaNguo__5165187F" Association="Self.FK__Playlist__MaNguo__5165187F">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="Playlist" EntitySet="Playlists" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TagVote__MaNguoi__4D94879B" Association="Self.FK__TagVote__MaNguoi__4D94879B">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="TagVote" EntitySet="TagVotes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TheoDoi__MaNgheS__3E52440B" Association="Self.FK__TheoDoi__MaNgheS__3E52440B">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="TheoDoi" EntitySet="TheoDois" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TheoDoi__MaNguoi__3D5E1FD2" Association="Self.FK__TheoDoi__MaNguoi__3D5E1FD2">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="TheoDoi" EntitySet="TheoDois" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Playlist___MaPla__5629CD9C" Association="Self.FK__Playlist___MaPla__5629CD9C">
+            <End Role="Playlist" EntitySet="Playlists" />
+            <End Role="Playlist_ChiTiet" EntitySet="Playlist_ChiTiet" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TagVote__MaTag__4CA06362" Association="Self.FK__TagVote__MaTag__4CA06362">
+            <End Role="Tag" EntitySet="Tags" />
+            <End Role="TagVote" EntitySet="TagVotes" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="QLAmNhac_Web1ModelStoreContainer" CdmEntityContainer="QLAmNhac_Web1Entities1">
+          <EntitySetMapping Name="BaiHats">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.BaiHat">
+              <MappingFragment StoreEntitySet="BaiHat">
+                <ScalarProperty Name="MaBaiHat" ColumnName="MaBaiHat" />
+                <ScalarProperty Name="TenBaiHat" ColumnName="TenBaiHat" />
+                <ScalarProperty Name="NguoiTrinhBay" ColumnName="NguoiTrinhBay" />
+                <ScalarProperty Name="LinkYoutube" ColumnName="LinkYoutube" />
+                <ScalarProperty Name="NguoiUpload" ColumnName="NguoiUpload" />
+                <ScalarProperty Name="NgayDang" ColumnName="NgayDang" />
+                <ScalarProperty Name="TrangThaiDuyet" ColumnName="TrangThaiDuyet" />
+                <ScalarProperty Name="GhiChuAdmin" ColumnName="GhiChuAdmin" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BinhLuans">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.BinhLuan">
+              <MappingFragment StoreEntitySet="BinhLuan">
+                <ScalarProperty Name="MaBinhLuan" ColumnName="MaBinhLuan" />
+                <ScalarProperty Name="NoiDung" ColumnName="NoiDung" />
+                <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
+                <ScalarProperty Name="MaBaiHat" ColumnName="MaBaiHat" />
+                <ScalarProperty Name="MaPlaylist" ColumnName="MaPlaylist" />
+                <ScalarProperty Name="NgayBinhLuan" ColumnName="NgayBinhLuan" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BinhLuanVotes">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.BinhLuanVote">
+              <MappingFragment StoreEntitySet="BinhLuanVote">
+                <ScalarProperty Name="IsUpvote" ColumnName="IsUpvote" />
+                <ScalarProperty Name="MaBinhLuan" ColumnName="MaBinhLuan" />
+                <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
+                <ScalarProperty Name="NgayVote" ColumnName="NgayVote" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NguoiDungs">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.NguoiDung">
+              <MappingFragment StoreEntitySet="NguoiDung">
+                <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
+                <ScalarProperty Name="TenDangNhap" ColumnName="TenDangNhap" />
+                <ScalarProperty Name="MatKhau" ColumnName="MatKhau" />
+                <ScalarProperty Name="HoTen" ColumnName="HoTen" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="MoTa" ColumnName="MoTa" />
+                <ScalarProperty Name="AnhDaiDien" ColumnName="AnhDaiDien" />
+                <ScalarProperty Name="PhanQuyen" ColumnName="PhanQuyen" />
+                <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
+                <ScalarProperty Name="NgayTao" ColumnName="NgayTao" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Playlists">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.Playlist">
+              <MappingFragment StoreEntitySet="Playlist">
+                <ScalarProperty Name="MaPlaylist" ColumnName="MaPlaylist" />
+                <ScalarProperty Name="TenPlaylist" ColumnName="TenPlaylist" />
+                <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
+                <ScalarProperty Name="CheDoRiengTu" ColumnName="CheDoRiengTu" />
+                <ScalarProperty Name="NgayTao" ColumnName="NgayTao" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Playlist_ChiTiet">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.Playlist_ChiTiet">
+              <MappingFragment StoreEntitySet="Playlist_ChiTiet">
+                <ScalarProperty Name="ThuTu" ColumnName="ThuTu" />
+                <ScalarProperty Name="MaPlaylist" ColumnName="MaPlaylist" />
+                <ScalarProperty Name="MaBaiHat" ColumnName="MaBaiHat" />
+                <ScalarProperty Name="NgayThem" ColumnName="NgayThem" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tags">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.Tag">
+              <MappingFragment StoreEntitySet="Tag">
+                <ScalarProperty Name="MaTag" ColumnName="MaTag" />
+                <ScalarProperty Name="TenTag" ColumnName="TenTag" />
+                <ScalarProperty Name="LaGoiY" ColumnName="LaGoiY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TagVotes">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.TagVote">
+              <MappingFragment StoreEntitySet="TagVote">
+                <ScalarProperty Name="MaBaiHat" ColumnName="MaBaiHat" />
+                <ScalarProperty Name="MaTag" ColumnName="MaTag" />
+                <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
+                <ScalarProperty Name="NgayVote" ColumnName="NgayVote" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TheoDois">
+            <EntityTypeMapping TypeName="QLAmNhac_Web1Model.TheoDoi">
+              <MappingFragment StoreEntitySet="TheoDoi">
+                <ScalarProperty Name="MaNguoiTheoDoi" ColumnName="MaNguoiTheoDoi" />
+                <ScalarProperty Name="MaNgheSi" ColumnName="MaNgheSi" />
+                <ScalarProperty Name="NgayTheoDoi" ColumnName="NgayTheoDoi" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
