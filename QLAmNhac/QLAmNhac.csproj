@@ -264,6 +264,9 @@
     <Content Include="Views\Playlist\Index.cshtml" />
     <Content Include="Views\Playlist\Details.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Admin\UserManager.cshtml" />
+    <Content Include="Views\Account\Manage.cshtml" />
+    <Content Include="Views\Upload\_MySongsTableRows.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

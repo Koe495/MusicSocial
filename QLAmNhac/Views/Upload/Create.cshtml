@@ -22,64 +22,70 @@
                     {
                         @Html.AntiForgeryToken()
 
-                        <div class="form-horizontal">
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                            <!-- Nhập Tên Bài Hát -->
-                            <div class="form-group">
-                                <label class="control-label" style="color: #ddd;">Tên bài hát <span class="text-danger">*</span></label>
-                                @Html.EditorFor(model => model.TenBaiHat, new { htmlAttributes = new { @class = "form-control", @style = "background: #111; border: 1px solid #444; color: #fff;", placeholder = "Ví dụ: Đừng Làm Trái Tim Anh Đau" } })
-                                @Html.ValidationMessageFor(model => model.TenBaiHat, "", new { @class = "text-danger" })
-                            </div>
-
-                            <!-- Nhập Link YouTube -->
-                            <div class="form-group">
-                                <label class="control-label" style="color: #ddd;">Link YouTube <span class="text-danger">*</span></label>
-                                @Html.EditorFor(model => model.LinkYoutube, new { htmlAttributes = new { @class = "form-control", @style = "background: #111; border: 1px solid #444; color: #fff;", placeholder = "https://www.youtube.com/watch?v=..." } })
-                                @Html.ValidationMessageFor(model => model.LinkYoutube, "", new { @class = "text-danger" })
-                                <p class="help-block" style="color: #777; font-size: 12px; margin-bottom: 0;">Hệ thống sẽ tự động lấy ID video chuẩn.</p>
-                            </div>
-
-                            <!-- Nhập Tên Nghệ Sĩ (Auto Youtube) -->
-                            <div class="form-group">
-                                <label class="control-label" style="color: #ddd;">Nghệ sĩ trình bày</label>
-                                @Html.EditorFor(model => model.NguoiTrinhBay, new { htmlAttributes = new { @class = "form-control", @style = "background: #111; border: 1px solid #444; color: #fff;", placeholder = "Để trống: Tự động lấy tên Kênh YouTube của link trên" } })
-                                @Html.ValidationMessageFor(model => model.NguoiTrinhBay, "", new { @class = "text-danger" })
-                                <p class="help-block" style="color: #1db954; font-size: 12px; font-style: italic;">
-                                    <i class="fa fa-magic"></i> Mẹo: Hãy để trống ô này nếu bạn muốn lấy chính xác tên kênh Youtube (VD: Sơn Tùng M-TP Official).
-                                </p>
-                            </div>
-
-                            <!-- Chọn Tag Thể Loại -->
-                            <div class="form-group">
-                                <label class="control-label" style="color: #ddd;">Thể loại (Chọn nhiều)</label>
-                                <div style="background: #111; border: 1px solid #444; padding: 10px; border-radius: 4px; max-height: 150px; overflow-y: auto;">
-                                    @if (listTags != null)
-                                    {
-                                        foreach (var tag in listTags)
-                                        {
-                                            <div class="checkbox" style="color: #ccc;">
-                                                <label>
-                                                    <input type="checkbox" name="selectedTags" value="@tag.MaTag" />
-                                                    <span style="font-weight: bold;">#@tag.TenTag</span>
-                                                </label>
-                                            </div>
-                                        }
-                                    }
-                                </div>
-                                <p class="help-block" style="color: #777; font-size: 12px;">Bài hát sẽ dễ tìm kiếm hơn nếu có tag chính xác.</p>
-                            </div>
-
-                            <hr style="border-color: #333;" />
-
-                            <!-- Nút Submit -->
-                            <div class="form-group text-right">
-                                <a href="@Url.Action("Index", "Home")" class="btn btn-default" style="background: transparent; color: #bbb; border: 1px solid #555;">Hủy bỏ</a>
-                                <button type="submit" class="btn btn-success" style="background: #1db954; border: none; font-weight: bold; padding: 8px 30px;">
-                                    <i class="fa fa-check"></i> Lưu bài hát
-                                </button>
-                            </div>
+                        <!-- Nhập Tên Bài Hát -->
+                        <div class="form-group">
+                            <label class="control-label" style="color: #ddd;">Tên bài hát <span class="text-danger">*</span></label>
+                            @Html.EditorFor(model => model.TenBaiHat, new { htmlAttributes = new { @class = "form-control", @style = "background: #111; border: 1px solid #444; color: #fff;", placeholder = "Ví dụ: Đừng Làm Trái Tim Anh Đau" } })
+                            @Html.ValidationMessageFor(model => model.TenBaiHat, "", new { @class = "text-danger" })
                         </div>
+
+                        <!-- Nhập Link YouTube -->
+                        <div class="form-group">
+                            <label class="control-label" style="color: #ddd;">Link YouTube <span class="text-danger">*</span></label>
+                            @Html.EditorFor(model => model.LinkYoutube, new { htmlAttributes = new { @class = "form-control", @style = "background: #111; border: 1px solid #444; color: #fff;", placeholder = "https://www.youtube.com/watch?v=..." } })
+                            @Html.ValidationMessageFor(model => model.LinkYoutube, "", new { @class = "text-danger" })
+                            <p class="help-block" style="color: #777; font-size: 12px; margin-bottom: 0;">Hệ thống sẽ tự động lấy ID video chuẩn.</p>
+                        </div>
+
+                        <!-- Nhập Tên Nghệ Sĩ (Auto Youtube) -->
+                        <div class="form-group">
+                            <label class="control-label" style="color: #ddd;">Nghệ sĩ trình bày</label>
+                            @Html.EditorFor(model => model.NguoiTrinhBay, new { htmlAttributes = new { @class = "form-control", @style = "background: #111; border: 1px solid #444; color: #fff;", placeholder = "Để trống: Tự động lấy tên Kênh YouTube của link trên" } })
+                            @Html.ValidationMessageFor(model => model.NguoiTrinhBay, "", new { @class = "text-danger" })
+                            <p class="help-block" style="color: #1db954; font-size: 12px; font-style: italic;">
+                                <i class="fa fa-magic"></i> Mẹo: Hãy để trống ô này nếu bạn muốn lấy chính xác tên kênh Youtube (VD: Sơn Tùng M-TP Official).
+                            </p>
+                        </div>
+
+                        <!-- Chọn Tag Thể Loại -->
+                        <div class="form-group">
+                            <label class="control-label" style="color: #ddd;">Thể loại (Chọn nhiều)</label>
+                            <div style="background: #111; border: 1px solid #444; padding: 10px; border-radius: 4px; max-height: 150px; overflow-y: auto;">
+                                @if (listTags != null)
+                                {
+                                    foreach (var tag in listTags)
+                                    {
+                                        <div class="checkbox" style="color: #ccc;">
+                                            <label>
+                                                <input type="checkbox" name="selectedTags" value="@tag.MaTag" />
+                                                <span style="font-weight: bold;">#@tag.TenTag</span>
+                                            </label>
+                                        </div>
+                                    }
+                                }
+
+                            </div>
+                            <p class="help-block" style="color: #777; font-size: 12px;">Bài hát sẽ dễ tìm kiếm hơn nếu có tag chính xác.</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Thêm tag mới (tùy chọn)</label>
+                            <input type="text" id="newTagName" name="newTagName" class="form-control" placeholder="Nhập tên tag mới..." style="background:#111; border:1px solid #444; color:white;" />
+                            <p class="help-block text-muted" style="color:#888;">Nhập tag mới sẽ tự động vote cho tag đó cho bài này.</p>
+                        </div>
+
+                        <hr style="border-color: #333;" />
+
+                        <!-- Nút Submit -->
+                        <div class="form-group text-right">
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-default" style="background: transparent; color: #bbb; border: 1px solid #555;">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-success" style="background: #1db954; border: none; font-weight: bold; padding: 8px 30px;">
+                                <i class="fa fa-check"></i> Lưu bài hát
+                            </button>
+                        </div>
+                    </div>
                     }
                 </div>
             </div>

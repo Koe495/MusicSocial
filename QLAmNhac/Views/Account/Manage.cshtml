@@ -1,0 +1,66 @@
+﻿@model QLAmNhac.Models.ManageVM
+@{
+    ViewBag.Title = "Quản lý Tài khoản";
+}
+
+<div class="row" style="margin-top:40px;">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default" style="background-color: #181818; border: 1px solid #333;">
+            <div class="panel-heading" style="background-color: #282828; color: #fff;">
+                <h3 class="panel-title">Quản lý Tài khoản</h3>
+            </div>
+            <div class="panel-body">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Success"]</div>
+                }
+
+                @using (Html.BeginForm("Manage", "Account", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label style="color:#b3b3b3;">Tên đăng nhập</label>
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color:#b3b3b3;">Tên hiển thị</label>
+                        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                    </div>
+
+                    <hr style="border-color:#333;" />
+
+                    <p style="color:#b3b3b3;">Đổi mật khẩu (bắt buộc nhập mật khẩu hiện tại):</p>
+
+                    <div class="form-group">
+                        <label style="color:#b3b3b3;">Mật khẩu hiện tại</label>
+                        @Html.PasswordFor(m => m.CurrentPassword, new { @class = "form-control", placeholder = "********" })
+                        @Html.ValidationMessageFor(m => m.CurrentPassword, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color:#b3b3b3;">Mật khẩu mới</label>
+                        @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control", placeholder = "********" })
+                        @Html.ValidationMessageFor(m => m.NewPassword, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color:#b3b3b3;">Xác nhận mật khẩu mới</label>
+                        @Html.PasswordFor(m => m.ConfirmNewPassword, new { @class = "form-control", placeholder = "********" })
+                        @Html.ValidationMessageFor(m => m.ConfirmNewPassword, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="text-danger" style="margin-bottom: 15px;">
+                        @Html.ValidationSummary(true)
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-default">Hủy</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

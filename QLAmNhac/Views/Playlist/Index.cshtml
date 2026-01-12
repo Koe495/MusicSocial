@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Playlist của tôi";
+    var currentQuery = ViewBag.Query as string ?? Request.QueryString["q"] ?? "";
 }
 
 <div class="container" style="margin-top: 40px;">
@@ -9,10 +10,21 @@
         <h2 style="color: #fff; margin: 0;">
             <i class="fa fa-list-ul" style="color: #1db954;"></i> Playlist của tôi
         </h2>
-        <br />
-        <button class="btn btn-success" data-toggle="modal" data-target="#createPlaylistModal" style="background: #1db954; border: none;">
-            <i class="fa fa-plus"></i> Tạo mới
-        </button>
+
+        <div style="display:flex; gap:8px; align-items:center;">
+            <form class="form-inline" method="get" action="@Url.Action("Index", "Playlist")" style="margin-right:8px;">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control input-sm" placeholder="Tìm playlist theo tên..." value="@currentQuery" style="background:#111; border:1px solid #444; color:white;" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-default btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </form>
+
+            <button class="btn btn-success" data-toggle="modal" data-target="#createPlaylistModal" style="background: #1db954; border: none;">
+                <i class="fa fa-plus"></i> Tạo mới
+            </button>
+        </div>
     </div>
 
     <div class="row">
@@ -100,24 +112,24 @@
             var name = $('#txtPlName').val();
             var isPrivate = $('#chkPrivate').is(':checked');
 
-            if(name.trim() == "") { alert("Vui lòng nhập tên!"); return; }
+            if (name.trim() == "") { alert("Vui lòng nhập tên!"); return; }
 
             $.ajax({
                 url: '/Playlist/Create', type: 'POST',
                 data: { name: name, isPrivate: isPrivate },
-                success: function(res) {
-                    if(res.success) location.reload();
+                success: function (res) {
+                    if (res.success) location.reload();
                     else alert(res.msg);
                 }
             });
         }
 
         function deletePlaylist(id) {
-            if(!confirm("Bạn có chắc muốn xóa playlist này?")) return;
+            if (!confirm("Bạn có chắc muốn xóa playlist này?")) return;
             $.ajax({
                 url: '/Playlist/Delete', type: 'POST', data: { id: id },
-                success: function(res) {
-                    if(res.success) $('#pl-' + id).fadeOut();
+                success: function (res) {
+                    if (res.success) $('#pl-' + id).fadeOut();
                     else alert(res.msg);
                 }
             });

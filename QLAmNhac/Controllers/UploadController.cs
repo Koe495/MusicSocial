@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.Web.Script.Serialization; // Thư viện quan trọng để decode JSON
+using System.Globalization;
 
 namespace QLAmNhac.Controllers
 {
@@ -28,25 +29,59 @@ namespace QLAmNhac.Controllers
             return View();
         }
 
-        // --- Trang Quản lý nhạc cá nhân (Cho Nghệ Sĩ) ---
+        // GET: --- Trang Quản lý nhạc cá nhân (Cho Nghệ Sĩ) --- (supports search q)
+        // Action hiển thị trang chính
         public ActionResult MySongs()
         {
             if (Session["User"] == null) return RedirectToAction("Login", "Account");
             var user = Session["User"] as NguoiDung;
 
-            // Lấy danh sách bài hát do chính user này upload
             var mySongs = db.BaiHats
-                            .Where(s => s.NguoiUpload == user.MaNguoiDung)
-                            .OrderByDescending(s => s.NgayDang)
-                            .ToList();
+                .Where(s => s.NguoiUpload == user.MaNguoiDung)
+                .OrderByDescending(s => s.NgayDang)
+                .ToList();
 
             return View(mySongs);
         }
 
+        // GET: AJAX search (partial)
+        public ActionResult MySongs_Search(string q)
+        {
+            if (Session["User"] == null)
+                return new HttpStatusCodeResult(401);
+
+            var user = Session["User"] as NguoiDung;
+
+            var mySongs = db.BaiHats
+                .Where(s => s.NguoiUpload == user.MaNguoiDung)
+                .OrderByDescending(s => s.NgayDang)
+                .ToList();
+
+            // Pass original query to partial so the view can highlight matches
+            ViewBag.Query = q ?? "";
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                var key = q.Trim();
+                var normKey = NormalizeForSearch(key);
+
+                mySongs = mySongs.Where(s =>
+                    (!string.IsNullOrEmpty(s.TenBaiHat) &&
+                     NormalizeForSearch(s.TenBaiHat).Contains(normKey))
+                    ||
+                    (!string.IsNullOrEmpty(s.NguoiTrinhBay) &&
+                     NormalizeForSearch(s.NguoiTrinhBay).Contains(normKey))
+                ).ToList();
+            }
+
+            return PartialView("_MySongsTableRows", mySongs);
+        }
+
+
         // POST: Xử lý lưu bài hát
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(BaiHat model, int[] selectedTags)
+        public ActionResult Create(BaiHat model, int[] selectedTags, string newTagName)
         {
             var user = Session["User"] as NguoiDung;
             if (user == null || (user.PhanQuyen != 1 && user.PhanQuyen != 2)) return RedirectToAction("Index", "Home");
@@ -68,7 +103,6 @@ namespace QLAmNhac.Controllers
                 // 2. XỬ LÝ NGƯỜI TRÌNH BÀY (AUTO YOUTUBE CHANNEL)
                 if (string.IsNullOrEmpty(model.NguoiTrinhBay))
                 {
-                    // Gọi hàm lấy tên kênh từ YouTube (Đã sửa lỗi font)
                     string channelName = GetYoutubeChannelName(cleanId);
                     if (!string.IsNullOrEmpty(channelName))
                     {
@@ -111,6 +145,34 @@ namespace QLAmNhac.Controllers
                         db.TagVotes.Add(vote);
                     }
                     db.SaveChanges();
+                }
+
+                // 6. Nếu có newTagName -> tạo tag (nếu chưa có) và vote cho nó
+                if (!string.IsNullOrWhiteSpace(newTagName))
+                {
+                    var tagName = newTagName.Trim();
+                    var existingTag = db.Tags.FirstOrDefault(t => t.TenTag.Equals(tagName, StringComparison.OrdinalIgnoreCase));
+                    Tag tagToUse = existingTag;
+                    if (existingTag == null)
+                    {
+                        tagToUse = new Tag { TenTag = tagName, LaGoiY = false };
+                        db.Tags.Add(tagToUse);
+                        db.SaveChanges();
+                    }
+
+                    var alreadyVoted = db.TagVotes.Any(tv => tv.MaBaiHat == model.MaBaiHat && tv.MaTag == tagToUse.MaTag && tv.MaNguoiDung == user.MaNguoiDung);
+                    if (!alreadyVoted)
+                    {
+                        var vote = new TagVote
+                        {
+                            MaBaiHat = model.MaBaiHat,
+                            MaTag = tagToUse.MaTag,
+                            MaNguoiDung = user.MaNguoiDung,
+                            NgayVote = DateTime.Now
+                        };
+                        db.TagVotes.Add(vote);
+                        db.SaveChanges();
+                    }
                 }
 
                 TempData["Success"] = model.TrangThaiDuyet == 1 ? "Đăng bài thành công!" : "Đã gửi bài, vui lòng chờ duyệt.";
@@ -157,7 +219,7 @@ namespace QLAmNhac.Controllers
         // 2. POST: Lưu thay đổi
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(BaiHat model, int[] selectedTags)
+        public ActionResult Edit(BaiHat model, int[] selectedTags, string newTagName)
         {
             var user = Session["User"] as NguoiDung;
             if (user == null) return RedirectToAction("Login", "Account");
@@ -188,19 +250,15 @@ namespace QLAmNhac.Controllers
                 }
 
                 // Nếu là Nghệ sĩ sửa -> Reset trạng thái về "Chờ duyệt" để Admin kiểm tra lại
-                // Nếu là Admin sửa -> Giữ nguyên hoặc cho phép duyệt luôn
                 if (user.PhanQuyen != 2)
                 {
                     song.TrangThaiDuyet = 0;
                 }
 
-                // --- XỬ LÝ CẬP NHẬT TAG (Phức tạp nhất) ---
-
-                // 1. Lấy danh sách Tag cũ mà user đã vote cho bài này
+                // --- XỬ LÝ CẬP NHẬT TAG ---
                 var oldVotes = db.TagVotes.Where(tv => tv.MaBaiHat == song.MaBaiHat && tv.MaNguoiDung == user.MaNguoiDung).ToList();
 
-                // 2. Xóa các vote cho tag mà user đã BỎ chọn (Có trong DB nhưng không có trong selectedTags)
-                if (selectedTags == null) selectedTags = new int[0]; // Tránh null
+                if (selectedTags == null) selectedTags = new int[0];
 
                 foreach (var vote in oldVotes)
                 {
@@ -210,7 +268,6 @@ namespace QLAmNhac.Controllers
                     }
                 }
 
-                // 3. Thêm các vote cho tag MỚI (Có trong selectedTags nhưng chưa có trong DB)
                 foreach (var tagId in selectedTags)
                 {
                     if (!oldVotes.Any(v => v.MaTag == tagId))
@@ -225,9 +282,37 @@ namespace QLAmNhac.Controllers
                 }
 
                 db.SaveChanges();
+
+                // Xử lý newTagName giống Create
+                if (!string.IsNullOrWhiteSpace(newTagName))
+                {
+                    var tagName = newTagName.Trim();
+                    var existingTag = db.Tags.FirstOrDefault(t => t.TenTag.Equals(tagName, StringComparison.OrdinalIgnoreCase));
+                    Tag tagToUse = existingTag;
+                    if (existingTag == null)
+                    {
+                        tagToUse = new Tag { TenTag = tagName, LaGoiY = false };
+                        db.Tags.Add(tagToUse);
+                        db.SaveChanges();
+                    }
+
+                    var alreadyVoted = db.TagVotes.Any(tv => tv.MaBaiHat == song.MaBaiHat && tv.MaTag == tagToUse.MaTag && tv.MaNguoiDung == user.MaNguoiDung);
+                    if (!alreadyVoted)
+                    {
+                        var vote = new TagVote
+                        {
+                            MaBaiHat = song.MaBaiHat,
+                            MaTag = tagToUse.MaTag,
+                            MaNguoiDung = user.MaNguoiDung,
+                            NgayVote = DateTime.Now
+                        };
+                        db.TagVotes.Add(vote);
+                        db.SaveChanges();
+                    }
+                }
+
                 TempData["Success"] = "Cập nhật bài hát thành công!";
 
-                // Điều hướng về đúng trang quản lý tùy theo quyền
                 if (user.PhanQuyen == 2) return RedirectToAction("Index", "Admin");
                 return RedirectToAction("MySongs");
             }
@@ -300,6 +385,29 @@ namespace QLAmNhac.Controllers
                 return null;
             }
             return null;
+        }
+
+        // Remove diacritics and normalize for search
+        private static string RemoveDiacritics(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return text;
+            var normalized = text.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder();
+            foreach (var c in normalized)
+            {
+                var uc = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (uc != UnicodeCategory.NonSpacingMark)
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        private static string NormalizeForSearch(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return string.Empty;
+            return RemoveDiacritics(text).ToLowerInvariant();
         }
     }
 }

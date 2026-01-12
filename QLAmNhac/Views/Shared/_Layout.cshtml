@@ -63,6 +63,12 @@
                                 <i class="fa fa-user-circle"></i> Xin chào, <strong>@user.HoTen</strong> <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
+                                <!-- MỤC MỚI: TÀI KHOẢN -->
+                                <li>
+                                    <a href="@Url.Action("Manage", "Account")">
+                                        <i class="fa fa-user"></i> Tài khoản
+                                    </a>
+                                </li>
 
                                 <!-- MỤC MỚI: PLAYLIST CỦA TÔI -->
                                 <li>
@@ -110,6 +116,11 @@
                                     <li>
                                         <a href="@Url.Action("ArtistManager", "Admin")">
                                             <i class="fa fa-users-cog"></i> Quản lý Nghệ sĩ
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("UserManager", "Admin")">
+                                            <i class="fa fa-users"></i> Quản lý người dùng
                                         </a>
                                     </li>
                                     <li role="separator" class="divider"></li>

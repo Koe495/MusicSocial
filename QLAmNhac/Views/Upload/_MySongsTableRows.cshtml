@@ -1,0 +1,159 @@
+﻿@model IEnumerable<QLAmNhac.Models.BaiHat>
+@using System.Text
+@using System.Collections.Generic
+@using System.Globalization
+@using System.Web
+
+@functions {
+    private static string RemoveDiacriticsLocal(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+        var normalized = text.Normalize(NormalizationForm.FormD);
+        var sb = new StringBuilder();
+        foreach (var c in normalized)
+        {
+            var uc = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (uc != UnicodeCategory.NonSpacingMark)
+            {
+                sb.Append(c);
+            }
+        }
+        return sb.ToString().Normalize(NormalizationForm.FormC);
+    }
+
+    // Highlight matches in 'source' for 'query' ignoring diacritics.
+    // Returns an IHtmlString with HTML-escaped non-highlighted parts and <mark> wrapped matches.
+    private IHtmlString HighlightMatches(string source, string query)
+    {
+        if (string.IsNullOrEmpty(source)) return new HtmlString(string.Empty);
+        if (string.IsNullOrEmpty(query)) return new HtmlString(HttpUtility.HtmlEncode(source));
+
+        var mapping = new List<int>(); // maps each char in normalizedSource to index in original source
+        var normBuilder = new StringBuilder();
+
+        for (int i = 0; i < source.Length; i++)
+        {
+            var ch = source[i].ToString();
+            var normalized = ch.Normalize(NormalizationForm.FormD);
+            var seg = new StringBuilder();
+            foreach (var c in normalized)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                {
+                    seg.Append(c);
+                }
+            }
+            var normSeg = seg.ToString();
+            if (string.IsNullOrEmpty(normSeg))
+                continue;
+
+            foreach (var c in normSeg)
+            {
+                normBuilder.Append(c);
+                mapping.Add(i);
+            }
+        }
+
+        var normSource = normBuilder.ToString().ToLowerInvariant();
+        var normQuery = RemoveDiacriticsLocal(query).ToLowerInvariant();
+
+        if (string.IsNullOrEmpty(normSource) || string.IsNullOrEmpty(normQuery))
+            return new HtmlString(HttpUtility.HtmlEncode(source));
+
+        var result = new StringBuilder();
+        int srcPos = 0;
+        int searchPos = 0;
+
+        while (true)
+        {
+            int found = normSource.IndexOf(normQuery, searchPos, StringComparison.Ordinal);
+            if (found < 0) break;
+
+            int origStart = mapping[found];
+            int origEnd = mapping[found + normQuery.Length - 1];
+
+            // append escaped text before match
+            if (origStart > srcPos)
+            {
+                result.Append(HttpUtility.HtmlEncode(source.Substring(srcPos, origStart - srcPos)));
+            }
+
+            // append highlighted matched substring (escape inside)
+            var matched = source.Substring(origStart, origEnd - origStart + 1);
+            result.Append("<mark>").Append(HttpUtility.HtmlEncode(matched)).Append("</mark>");
+
+            // move pointers
+            searchPos = found + normQuery.Length;
+            srcPos = origEnd + 1;
+        }
+
+        // append remaining
+        if (srcPos < source.Length)
+        {
+            result.Append(HttpUtility.HtmlEncode(source.Substring(srcPos)));
+        }
+
+        return new HtmlString(result.ToString());
+    }
+}
+
+@if (Model == null || !Model.Any())
+{
+    <tr>
+        <td colspan="4" class="text-center text-muted">
+            Không tìm thấy bài hát phù hợp
+        </td>
+    </tr>
+}
+else
+{
+    var query = ViewBag.Query as string ?? "";
+
+    foreach (var item in Model)
+    {
+        <tr id="row-@(item.MaBaiHat)">
+            <td width="120">
+                <img src="https://img.youtube.com/vi/@(item.LinkYoutube)/mqdefault.jpg"
+                     style="width: 100px; border-radius: 4px;" alt="@item.TenBaiHat" />
+            </td>
+
+            <td>
+                <strong style="font-size: 16px;">@Html.Raw(HighlightMatches(item.TenBaiHat ?? "", query).ToString())</strong><br />
+                <span class="text-muted">
+                    <i class="fa fa-microphone"></i> @Html.Raw(HighlightMatches(item.NguoiTrinhBay ?? "", query).ToString())
+                </span><br />
+                <small class="text-muted">
+                    <i class="fa fa-clock"></i>
+                    @(item.NgayDang.HasValue ? item.NgayDang.Value.ToString("dd/MM/yyyy") : "")
+                </small>
+            </td>
+
+            <td>
+                @if (item.TrangThaiDuyet == 1)
+                {
+                    <span class="label label-success">Đã duyệt</span>
+                }
+                else if (item.TrangThaiDuyet == 0)
+                {
+                    <span class="label label-warning">Đang chờ</span>
+                }
+                else
+                {
+                    <span class="label label-danger" title="@item.GhiChuAdmin">Bị từ chối</span>
+                }
+            </td>
+
+            <td class="text-right">
+                <a href="@Url.Action("Edit", "Upload", new { id = item.MaBaiHat })"
+                   class="btn btn-primary btn-sm">
+                    <i class="fa fa-edit"></i> Sửa
+                </a>
+
+                <button type="button" class="btn btn-danger btn-sm"
+                        onclick="deleteSong(@item.MaBaiHat)">
+                    <i class="fa fa-trash"></i> Xóa
+                </button>
+            </td>
+        </tr>
+    }
+}

@@ -70,29 +70,37 @@
                 {
                     foreach (var tag in tags)
                     {
-                        <div id="tag-chip-@tag.TagId" class="tag-chip @(tag.IsVotedByMe ? "voted-tag" : "")">
+                        <div id="tag-chip-@tag.TagId" class="tag-chip @(tag.IsVotedByMe ? "voted-tag" : "")" style="display:inline-block; margin:4px;">
                             <span class="tag-name">#@tag.TagName</span>
                             <span class="tag-score" id="score-@tag.TagId">@tag.Score</span>
 
                             <button class="btn-vote" onclick="voteTag(@Model.MaBaiHat, @tag.TagId, this)">
                                 <i class="fa fa-caret-up"></i>
                             </button>
+
+                            @* If current user is Admin show remove-tag control *@
+                            @if (currentUser != null && currentUser.PhanQuyen == 2)
+                            {
+                                <button class="btn btn-xs btn-danger" style="margin-left:8px; vertical-align: middle; padding:3px 6px;" title="Xóa tag" onclick="adminDeleteTag(@Model.MaBaiHat, @tag.TagId)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            }
                         </div>
                     }
                 }
                 else
-                { <p class="text-muted">Chưa có tag nào.</p>}
+                { <p class="text-muted"></p>}
             </div>
 
             <!-- BÌNH LUẬN -->
             <div class="mt-5" style="margin-top: 40px;">
                 <h4 style="border-bottom: 2px solid #1db954; display: inline-block; padding-bottom: 5px;">
-                    <i class="fa fa-comments"></i> Bình luận (@comments.Count)
+                    <i class="fa fa-comments"></i> Bình luận (<span id="commentCount">@comments.Count</span>)
                 </h4>
                 <div class="comment-box" style="background: #282828; padding: 15px; border-radius: 8px; margin-top: 15px;">
                     <textarea id="txtComment" class="form-control" style="background: #181818; color: #fff; border: 1px solid #444;" rows="2" placeholder="Chia sẻ cảm nghĩ của bạn..."></textarea>
                     <div class="text-right" style="margin-top: 10px;">
-                        <button class="btn btn-success btn-sm" onclick="submitComment()">Gửi bình luận</button>
+                        <button id="btnSubmitComment" class="btn btn-success btn-sm" onclick="submitComment()">Gửi bình luận</button>
                     </div>
                 </div>
                 <div id="commentList" style="margin-top: 20px;">
@@ -260,6 +268,7 @@
 @section scripts {
     <script>
         var currentSongId = @Model.MaBaiHat;
+        var currentUserId = @currentUserId;
 
         // --- CÁC HÀM XỬ LÝ TAG & COMMENT---
         function voteTag(songId, tagId, btnElement) {
@@ -274,6 +283,42 @@
                         else { scoreSpan.text(Math.max(0, currentScore - 1)); tagChip.removeClass('voted-tag'); }
                     } else { alert(res.msg); }
                 }, error: function() { alert('Lỗi kết nối server!'); }
+            });
+        }
+
+        // Admin: delete tag association from song
+        function adminDeleteTag(songId, tagId) {
+            if (!confirm("Bạn chắc chắn muốn xóa thẻ này khỏi bài hát?")) return;
+
+            $.ajax({
+                url: '/Admin/DeleteTagFromSong',
+                type: 'POST',
+                data: { songId: songId, tagId: tagId },
+                success: function (res) {
+                    if (res && res.success) {
+                        $('#tag-chip-' + tagId).fadeOut();
+                        $('#suggest-chip-' + tagId).remove();
+                        // Optionally show a short success toast
+                    } else {
+                        alert(res && res.msg ? res.msg : "Xóa thất bại!");
+                    }
+                },
+                error: function (xhr, status, err) {
+                    // Try to extract JSON error message from server if available
+                    var msg = "Lỗi kết nối server!";
+                    try {
+                        if (xhr && xhr.responseText) {
+                            var json = JSON.parse(xhr.responseText);
+                            if (json && json.msg) msg = json.msg;
+                        }
+                    } catch (e) {
+                        // Not JSON - fall back to raw responseText (trim for safety)
+                        if (xhr && xhr.responseText) {
+                            msg = xhr.responseText.substring(0, 500);
+                        }
+                    }
+                    alert(msg);
+                }
             });
         }
 
@@ -352,7 +397,7 @@
             });
         }
 
-        // Cập nhật / thêm thẻ tag trên tag-cloud mà không reload trang
+        // Thêm thẻ tag trên tag-cloud mà không reload trang
         function updateTagCloud(tagVm) {
             var id = tagVm.TagId;
             var name = tagVm.TagName;
@@ -408,7 +453,77 @@
         function showEditForm(id) { $('#cmt-content-'+id).hide(); $('#cmt-edit-form-'+id).slideDown(); }
         function cancelEditComment(id) { $('#cmt-edit-form-'+id).hide(); $('#cmt-content-'+id).show(); }
         function saveEditComment(id) { var c = $('#cmt-edit-txt-' + id).val(); $.ajax({ url: '/Songs/EditComment', type: 'POST', data: { id: id, content: c }, success: function(r) { if(r.success){ $('#cmt-content-'+id).text(c).show(); $('#cmt-edit-form-'+id).hide(); } else alert(r.msg); } }); }
-        function submitComment() { var c = $('#txtComment').val(); if (c.trim() == "") { alert("Nhập nội dung!"); return; } $.ajax({ url: '/Songs/AddComment', type: 'POST', data: { songId: @Model.MaBaiHat, content: c }, success: function (r) { if (r.success) location.reload(); else alert(r.msg); } }); }
+
+        // Ajax submit comment — does not reload page (keeps music playing)
+        function submitComment() {
+            var $btn = $('#btnSubmitComment');
+            var content = $('#txtComment').val();
+            if (content.trim() == "") { alert("Nhập nội dung!"); return; }
+
+            $btn.prop('disabled', true).text('Đang gửi...');
+
+            $.ajax({
+                url: '/Songs/AddComment',
+                type: 'POST',
+                data: { songId: currentSongId, content: content },
+                success: function (r) {
+                    if (r.success) {
+                        // Build comment markup and prepend to the list (matches server markup)
+                        var id = r.id;
+                        var author = r.author || "Bạn";
+                        var time = r.time || "";
+                        var escapedContent = htmlEncode(r.content || content);
+
+                        var dropdownHtml = '<div class="dropdown more-actions-container">' +
+                                            '<button class="btn-more-options dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></button>' +
+                                            '<ul class="dropdown-menu custom-dropdown-menu">' +
+                                                '<li><a onclick="showEditForm(' + id + ')"><i class="fa fa-pencil-alt"></i> Chỉnh sửa</a></li>' +
+                                                '<li role="separator" class="divider" style="background-color: #444; margin: 0;"></li>' +
+                                                '<li><a onclick="deleteComment(' + id + ')" style="color: #d9534f;"><i class="fa fa-trash"></i> Xóa</a></li>' +
+                                            '</ul>' +
+                                          '</div>';
+
+                        var mediaHtml = '<div class="media" id="cmt-row-' + id + '">' +
+                                            '<div class="media-left"><img src="https://ui-avatars.com/api/?name=' + encodeURIComponent(author) + '&background=random" class="media-object img-circle" style="width:45px"></div>' +
+                                            '<div class="media-body">';
+                        // current user is the author, so show owner actions
+                        mediaHtml += dropdownHtml;
+                        mediaHtml += '<h5 class="media-heading" style="color: #1db954; font-weight: bold;">' + htmlEncode(author) + ' <small style="color: #777;"> - ' + htmlEncode(time) + '</small></h5>' +
+                                     '<p id="cmt-content-' + id + '" style="color: #ddd;">' + escapedContent + '</p>' +
+                                     '<div id="cmt-edit-form-' + id + '" style="display: none; margin-top: 10px;">' +
+                                         '<textarea id="cmt-edit-txt-' + id + '" class="form-control" style="background: #111; color: #fff; margin-bottom: 5px;">' + escapedContent + '</textarea>' +
+                                         '<div style="text-align: right;"><button class="btn btn-xs btn-custom-save" onclick="saveEditComment(' + id + ')"><i class="fa fa-check"></i> Lưu</button><button class="btn btn-xs btn-custom-cancel" onclick="cancelEditComment(' + id + ')"><i class="fa fa-times"></i> Hủy</button></div>' +
+                                     '</div>' +
+                                     '<div class="cmt-actions">' +
+                                         '<button id="btn-up-' + id + '" class="cmt-btn" title="Hay" onclick="voteComment(' + id + ', true)"><i class="fa fa-thumbs-up"></i></button>' +
+                                         '<span class="cmt-score" id="cmt-score-' + id + '">0</span>' +
+                                         '<button id="btn-down-' + id + '" class="cmt-btn" title="Dở" onclick="voteComment(' + id + ', false)"><i class="fa fa-thumbs-down"></i></button>' +
+                                     '</div>' +
+                                 '</div></div>';
+
+                        $('#commentList').prepend(mediaHtml);
+
+                        // Clear input, increment counter
+                        $('#txtComment').val('');
+                        var $count = $('#commentCount');
+                        var cur = parseInt($count.text() || "0");
+                        $count.text(cur + 1);
+
+                        // Optionally scroll to the new comment or flash it
+                        $('#cmt-row-' + id).hide().slideDown();
+
+                    } else {
+                        alert(r.msg || "Gửi bình luận thất bại!");
+                    }
+                },
+                error: function () {
+                    alert("Lỗi kết nối server!");
+                },
+                complete: function () {
+                    $btn.prop('disabled', false).text('Gửi bình luận');
+                }
+            });
+        }
 
         // Gắn handler khi modal mở để load gợi ý tag
         $('#addTagModal').on('show.bs.modal', function () {

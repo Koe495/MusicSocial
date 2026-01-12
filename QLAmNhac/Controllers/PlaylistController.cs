@@ -12,17 +12,25 @@ namespace QLAmNhac.Controllers
         private QLAmNhac_Web1Entities1 db = new QLAmNhac_Web1Entities1();
 
         // 1. Danh sách Playlist của tôi (Trang quản lý riêng)
-        public ActionResult Index()
+        public ActionResult Index(string q)
         {
             if (Session["User"] == null) return RedirectToAction("Login", "Account");
             var user = Session["User"] as NguoiDung;
 
-            var playlists = db.Playlists.Where(p => p.MaNguoiDung == user.MaNguoiDung)
-                                        .OrderByDescending(p => p.NgayTao).ToList();
+            var playlistsQuery = db.Playlists.Where(p => p.MaNguoiDung == user.MaNguoiDung);
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                string key = q.Trim();
+                playlistsQuery = playlistsQuery.Where(p => p.TenPlaylist.Contains(key));
+            }
+
+            var playlists = playlistsQuery.OrderByDescending(p => p.NgayTao).ToList();
+            ViewBag.Query = q;
             return View(playlists);
         }
 
-        // 2. Tạo Playlist mới (AJAX) - Đã sửa tên hàm để khớp với View Details
+        // 2. Tạo Playlist mới
         [HttpPost]
         public ActionResult CreateAjax(string tenPlaylist)
         {
@@ -43,6 +51,33 @@ namespace QLAmNhac.Controllers
                 db.SaveChanges();
 
                 return Json(new { success = true, msg = "Tạo playlist thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, msg = "Lỗi server: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Create(string name, bool isPrivate)
+        {
+            if (Session["User"] == null) return Json(new { success = false, msg = "Bạn cần đăng nhập!" });
+            if (string.IsNullOrWhiteSpace(name)) return Json(new { success = false, msg = "Tên Playlist không được để trống!" });
+
+            try
+            {
+                var user = Session["User"] as NguoiDung;
+
+                var pl = new Playlist();
+                pl.TenPlaylist = name.Trim();
+                pl.MaNguoiDung = user.MaNguoiDung;
+                pl.CheDoRiengTu = isPrivate;
+                pl.NgayTao = DateTime.Now;
+
+                db.Playlists.Add(pl);
+                db.SaveChanges();
+
+                return Json(new { success = true, msg = "Tạo playlist thành công!", id = pl.MaPlaylist, name = pl.TenPlaylist });
             }
             catch (Exception ex)
             {

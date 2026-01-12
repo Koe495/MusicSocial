@@ -21,7 +21,7 @@ namespace MusicSocialNetwork.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Register(RegisterVM model)
-        {
+        {       
             if (ModelState.IsValid)
             {
                 // 1. Kiểm tra tên đăng nhập đã tồn tại chưa
@@ -81,6 +81,102 @@ namespace MusicSocialNetwork.Controllers
                 }
             }
             return View(model);
+        }
+
+        // --- Quản lý Tài khoản (GET) ---
+        [HttpGet]
+        public ActionResult Manage()
+        {
+            if (Session["User"] == null) return RedirectToAction("Login", "Account");
+
+            var sessionUser = Session["User"] as NguoiDung;
+            var user = db.NguoiDungs.Find(sessionUser.MaNguoiDung);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            var model = new ManageVM
+            {
+                Username = user.TenDangNhap,
+                FullName = user.HoTen
+            };
+
+            return View(model);
+        }
+
+        // --- Quản lý Tài khoản (POST) ---
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Manage(ManageVM model)
+        {
+            if (Session["User"] == null) return RedirectToAction("Login", "Account");
+
+            var sessionUser = Session["User"] as NguoiDung;
+            var user = db.NguoiDungs.Find(sessionUser.MaNguoiDung);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            // Server-side basic validation
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // 1. Kiểm tra username có bị trùng (nếu thay đổi)
+            if (!string.Equals(user.TenDangNhap, model.Username, StringComparison.OrdinalIgnoreCase))
+            {
+                var exists = db.NguoiDungs.Any(u => u.TenDangNhap == model.Username && u.MaNguoiDung != user.MaNguoiDung);
+                if (exists)
+                {
+                    ModelState.AddModelError("Username", "Tên đăng nhập đã được sử dụng bởi người khác.");
+                    return View(model);
+                }
+                user.TenDangNhap = model.Username;
+            }
+
+            // 2. Cập nhật FullName
+            user.HoTen = model.FullName;
+
+            // 3. Nếu user muốn đổi mật khẩu
+            var wantsChangePassword = !string.IsNullOrWhiteSpace(model.NewPassword) || !string.IsNullOrWhiteSpace(model.CurrentPassword) || !string.IsNullOrWhiteSpace(model.ConfirmNewPassword);
+            if (wantsChangePassword)
+            {
+                // Kiểm tra mật khẩu hiện tại
+                if (string.IsNullOrWhiteSpace(model.CurrentPassword))
+                {
+                    ModelState.AddModelError("CurrentPassword", "Vui lòng nhập mật khẩu hiện tại để thay đổi mật khẩu.");
+                    return View(model);
+                }
+
+                // So sánh mật khẩu hiện tại (lưu ý: hệ thống lưu mật khẩu thuần)
+                if (user.MatKhau != model.CurrentPassword)
+                {
+                    ModelState.AddModelError("CurrentPassword", "Mật khẩu hiện tại không đúng.");
+                    return View(model);
+                }
+
+                // Kiểm tra mật khẩu mới và xác nhận
+                if (string.IsNullOrWhiteSpace(model.NewPassword))
+                {
+                    ModelState.AddModelError("NewPassword", "Mật khẩu mới không được để trống.");
+                    return View(model);
+                }
+
+                if (model.NewPassword != model.ConfirmNewPassword)
+                {
+                    ModelState.AddModelError("ConfirmNewPassword", "Mật khẩu xác nhận không khớp.");
+                    return View(model);
+                }
+
+                // Cập nhật mật khẩu
+                user.MatKhau = model.NewPassword;
+            }
+
+            db.SaveChanges();
+
+            // Cập nhật lại Session["User"] (để hiển thị tên mới v.v.)
+            var refreshed = db.NguoiDungs.Find(user.MaNguoiDung);
+            Session["User"] = refreshed;
+
+            TempData["Success"] = "Cập nhật thông tin tài khoản thành công!";
+            return RedirectToAction("Manage");
         }
 
         // --- ĐĂNG XUẤT ---
